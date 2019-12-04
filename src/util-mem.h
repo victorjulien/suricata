@@ -221,6 +221,7 @@ SC_ATOMIC_EXTERN(unsigned int, engine_stage);
 
 #define SCMalloc(a) ({ \
     void *ptrmem = NULL; \
+    if ((size_t)(a) > (size_t)INT_MAX) abort();\
     \
     ptrmem = malloc((a)); \
     if (ptrmem == NULL) { \
@@ -237,6 +238,7 @@ SC_ATOMIC_EXTERN(unsigned int, engine_stage);
 
 #define SCRealloc(x, a) ({ \
     void *ptrmem = NULL; \
+    if ((size_t)(a) > (size_t)INT_MAX) abort();\
     \
     ptrmem = realloc((x), (a)); \
     if (ptrmem == NULL) { \
@@ -252,6 +254,7 @@ SC_ATOMIC_EXTERN(unsigned int, engine_stage);
 
 #define SCCalloc(nm, a) ({ \
     void *ptrmem = NULL; \
+    if (((size_t)(a)*(size_t)(nm)) > (size_t)INT_MAX) abort();\
     \
     ptrmem = calloc((nm), (a)); \
     if (ptrmem == NULL) { \
@@ -287,6 +290,7 @@ SC_ATOMIC_EXTERN(unsigned int, engine_stage);
     size_t _len = (b); \
     \
     size_t _scstrndup_len = _len + 1; \
+    if (_scstrndup_len > (size_t)INT_MAX) abort();\
     ptrmem = (char *)malloc(_scstrndup_len); \
     if (ptrmem == NULL) { \
         if (SC_ATOMIC_GET(engine_stage) == SURICATA_INIT) {\
@@ -362,6 +366,7 @@ SC_ATOMIC_EXTERN(unsigned int, engine_stage);
  */
 #define SCMallocAligned(a, b) ({ \
     void *ptrmem = NULL; \
+    if ((size_t)(a) > (size_t)INT_MAX) abort();\
     \
     int _r = posix_memalign(&ptrmem, (b), (a)); \
     if (_r != 0 || ptrmem == NULL) { \
