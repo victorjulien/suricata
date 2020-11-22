@@ -333,6 +333,25 @@ typedef unsigned short FlowStateType;
 /** Local Thread ID */
 typedef uint16_t FlowThreadId;
 
+typedef struct FlowTuple {
+    FlowAddress src, dst;
+    union {
+        Port sp;        /**< tcp/udp source port */
+        struct {
+            uint8_t type;   /**< icmp type */
+            uint8_t code;   /**< icmp code */
+        } icmp_s;
+    };
+    union {
+        Port dp;        /**< tcp/udp destination port */
+        struct {
+            uint8_t type;   /**< icmp type */
+            uint8_t code;   /**< icmp code */
+        } icmp_d;
+    };
+    uint8_t proto;
+} __attribute__((__packed__)) FlowTuple;
+
 /**
  *  \brief Flow data structure.
  *
@@ -505,6 +524,8 @@ typedef struct Flow_
     uint32_t tosrcpktcnt;
     uint64_t todstbytecnt;
     uint64_t tosrcbytecnt;
+
+    FlowTuple *translate;
 } Flow;
 
 enum FlowState {

@@ -649,6 +649,47 @@ int AppLayerHandleTCPData(ThreadVars *tv, TcpReassemblyThreadCtx *ra_ctx,
             if (eol) {
                 eol += 2;
                 const ptrdiff_t line_size = eol - data;
+                char str[line_size + 1];
+                memcpy(str, data, line_size);
+                str[line_size] = '\0';
+
+                struct in_addr src_ip;
+                uint16_t sp;
+                struct in_addr dst_ip;
+                uint16_t dp;
+                int state = 0;
+
+                char *xsaveptr = NULL;
+                char *v = strtok_r(str, ",", &xsaveptr);
+                while (v != NULL) {
+                    if (v[0] != '[')
+                        goto next;
+                    SCLogNotice("v '%s'", v);
+
+                    char *a = v;
+                    char *prt = strchr(v, ':');
+                    if (prt) {
+                        a++;
+                        *prt++ = '\0';
+                        a[strlen(a) - 1] = '\0';
+                        SCLogNotice("a %s prt %s", a, prt);
+
+                        if (state++ == 0) {
+                            inet_pton(AF_INET, a, &src_ip);
+                            sp = atoi(prt);
+                            SCLogNotice("SRC %08x SP %u", src_ip.s_addr, sp);
+                        } else {
+                            inet_pton(AF_INET, a, &dst_ip);
+                            dp = atoi(prt);
+                            SCLogNotice("DST %08x DP %u", dst_ip.s_addr, dp);
+                            break;
+                        }
+                    }
+                next:
+                    v = strtok_r(NULL, ",", &xsaveptr);
+                }
+
+
                 data_len -= line_size;
                 data = eol;
                 f->flags |= FLOW_IS_DECRYPTED;
