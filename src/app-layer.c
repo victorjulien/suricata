@@ -48,6 +48,7 @@
 #include "decode-events.h"
 
 #include "app-layer-htp-mem.h"
+#include "util-memcmp.h"
 
 /**
  * \brief This is for the app layer in general and it contains per thread
@@ -641,6 +642,20 @@ int AppLayerHandleTCPData(ThreadVars *tv, TcpReassemblyThreadCtx *ra_ctx,
      * only run the proto detection once. */
     if (alproto == ALPROTO_UNKNOWN && (flags & STREAM_START)) {
         DEBUG_VALIDATE_BUG_ON(FlowChangeProto(f));
+
+        /* hack: skip SSLproxy header, which ends in a \r\n */
+        if (data_len > 10 && SCMemcmp(data, "SSLproxy: ", 10) == 0) {
+            uint8_t *eol = BasicSearch(data, data_len, (const uint8_t *)"\r\n", 2);
+            if (eol) {
+                eol += 2;
+                const ptrdiff_t line_size = eol - data;
+                data_len -= line_size;
+                data = eol;
+                f->flags |= FLOW_IS_DECRYPTED;
+                StreamTcpUpdateAppLayerProgress(ssn, direction, (uint32_t)line_size);
+            }
+        }
+
         /* run protocol detection */
         if (TCPProtoDetect(tv, ra_ctx, app_tctx, p, f, ssn, stream,
                            data, data_len, flags) != 0) {

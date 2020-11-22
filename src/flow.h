@@ -110,6 +110,8 @@ typedef struct AppLayerParserState_ AppLayerParserState;
 #define FLOW_DIR_REVERSED               BIT_U32(26)
 /** Indicate that the flow did trigger an expectation creation */
 #define FLOW_HAS_EXPECTATION            BIT_U32(27)
+/** decrypted flow */
+#define FLOW_IS_DECRYPTED               BIT_U32(28)
 
 /** All packets in this flow should be passed */
 #define FLOW_ACTION_PASS BIT_U32(28)
