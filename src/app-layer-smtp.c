@@ -1251,7 +1251,8 @@ static int SMTPProcessRequest(SMTPState *state, Flow *f,
         state->current_line_len +
         state->current_line_delimiter_len);
 
-    if (!(state->parser_state & SMTP_PARSER_STATE_FIRST_REPLY_SEEN)) {
+    if ((f->flags & FLOW_IS_DECRYPTED) == 0 &&
+            !(state->parser_state & SMTP_PARSER_STATE_FIRST_REPLY_SEEN)) {
         SMTPSetEvent(state, SMTP_DECODER_EVENT_NO_SERVER_WELCOME_MESSAGE);
     }
 
