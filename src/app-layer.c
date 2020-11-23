@@ -694,6 +694,16 @@ int AppLayerHandleTCPData(ThreadVars *tv, TcpReassemblyThreadCtx *ra_ctx,
                 data = eol;
                 f->flags |= FLOW_IS_DECRYPTED;
                 StreamTcpUpdateAppLayerProgress(ssn, direction, (uint32_t)line_size);
+
+                FlowTuple *ft = SCCalloc(1, sizeof(*ft));
+                if (ft) {
+                    ft->proto = f->proto;
+                    ft->sp = sp;
+                    ft->dp = dp;
+                    memcpy(&ft->src, &src_ip, sizeof(src_ip));
+                    memcpy(&ft->dst, &dst_ip, sizeof(dst_ip));
+                    f->translate = ft;
+                }
             }
         }
 

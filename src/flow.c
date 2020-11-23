@@ -494,6 +494,20 @@ void FlowHandlePacketUpdate(Flow *f, Packet *p, ThreadVars *tv, DecodeThreadVars
         SCLogDebug("setting FLOW_NOPAYLOAD_INSPECTION flag on flow %p", f);
         DecodeSetNoPayloadInspectionFlag(p);
     }
+
+    if ((f->flags & FLOW_IS_DECRYPTED) != 0 && f->translate) {
+        if (FlowGetPacketDirection(f, p) == TOSERVER) {
+            memcpy(&p->src.address, &f->translate->src.address, 16);
+            memcpy(&p->dst.address, &f->translate->dst.address, 16);
+            p->sp = f->translate->sp;
+            p->dp = f->translate->dp;
+        } else {
+            memcpy(&p->src.address, &f->translate->dst.address, 16);
+            memcpy(&p->dst.address, &f->translate->src.address, 16);
+            p->sp = f->translate->dp;
+            p->dp = f->translate->sp;
+        }
+    }
 }
 
 /** \brief Entry point for packet flow handling

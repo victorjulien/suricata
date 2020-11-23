@@ -124,6 +124,8 @@
                 MacSetReset(ms); \
             } \
         } \
+        SCFree((f)->translate); \
+        (f)->translate = NULL; \
         RESET_COUNTERS((f)); \
     } while(0)
 
@@ -132,6 +134,9 @@
         \
         FLOWLOCK_DESTROY((f)); \
         GenericVarFree((f)->flowvar); \
+        \
+        SCFree((f)->translate); \
+        \
     } while(0)
 
 /** \brief check if a memory alloc would fit in the memcap
