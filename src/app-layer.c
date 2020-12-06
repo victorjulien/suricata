@@ -703,6 +703,8 @@ int AppLayerHandleTCPData(ThreadVars *tv, TcpReassemblyThreadCtx *ra_ctx,
                     memcpy(&ft->src, &src_ip, sizeof(src_ip));
                     memcpy(&ft->dst, &dst_ip, sizeof(dst_ip));
                     f->translate = ft;
+                    f->flags &= ~(FLOW_TOSERVER_IPONLY_SET|FLOW_TOCLIENT_IPONLY_SET);
+                    f->flags &= ~(FLOW_SGH_TOSERVER|FLOW_SGH_TOCLIENT);
                 }
             }
         }
