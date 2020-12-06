@@ -694,6 +694,11 @@ int AppLayerHandleTCPData(ThreadVars *tv, TcpReassemblyThreadCtx *ra_ctx,
                 data = eol;
                 f->flags |= FLOW_IS_DECRYPTED;
                 StreamTcpUpdateAppLayerProgress(ssn, direction, (uint32_t)line_size);
+                if (direction) {
+                    ssn->server.raw_progress_rel = (uint32_t)line_size;
+                } else {
+                    ssn->client.raw_progress_rel = (uint32_t)line_size;
+                }
 
                 FlowTuple *ft = SCCalloc(1, sizeof(*ft));
                 if (ft) {
@@ -705,6 +710,9 @@ int AppLayerHandleTCPData(ThreadVars *tv, TcpReassemblyThreadCtx *ra_ctx,
                     f->translate = ft;
                     f->flags &= ~(FLOW_TOSERVER_IPONLY_SET|FLOW_TOCLIENT_IPONLY_SET);
                     f->flags &= ~(FLOW_SGH_TOSERVER|FLOW_SGH_TOCLIENT);
+                    ssn->client.flags &= ~STREAMTCP_STREAM_FLAG_DISABLE_RAW;
+                    ssn->server.flags &= ~STREAMTCP_STREAM_FLAG_DISABLE_RAW;
+                    // TODO undo DetectPostInspectFileFlagsUpdate
                 }
             }
         }
