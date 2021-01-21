@@ -712,7 +712,8 @@ jobs:
                 zlib1g \
                 zlib1g-dev \
                 exuberant-ctags \
-                curl
+                curl \
+                wget
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
@@ -726,7 +727,7 @@ jobs:
           chmod 755 $HOME/.cargo/bin/cbindgen
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
       - run: ./autogen.sh
-      - run: CC=clang-10 CXX=clang++-10 CFLAGS="${DEFAULT_CFLAGS} -fprofile-arcs -ftest-coverage -g -fno-strict-aliasing -fno-omit-frame-pointer -fPIC -Wno-unused-parameter" ./configure --enable-fuzztargets --enable-debug-validation --disable-shared
+      - run: CC=clang-10 CXX=clang++-10 CFLAGS="-fprofile-arcs -ftest-coverage -g -fno-strict-aliasing -fno-omit-frame-pointer -fPIC -Wno-unused-parameter" CXXFLAGS="-fprofile-arcs -ftest-coverage -g -fno-strict-aliasing -fno-omit-frame-pointer" ./configure --enable-fuzztargets --enable-debug-validation --disable-shared --enable-gccprotect
       - run: make -j2
       - run: ./qa/run-ossfuzz-corpus.sh
       - name: Gcov
