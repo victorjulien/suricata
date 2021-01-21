@@ -4,9 +4,9 @@ do
     target=$(basename $ftarget)
     echo "target $target"
     #download public corpus
-    rm public.zip
+    rm -f public.zip
     wget "https://storage.googleapis.com/suricata-backup.clusterfuzz-external.appspot.com/corpus/libFuzzer/suricata_$target/public.zip"
-    rm -r corpus_$target
+    rm -rf corpus_$target
     unzip -q public.zip -d corpus_$target
     #run target on corpus
     ./src/$target corpus_$target
