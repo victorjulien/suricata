@@ -712,6 +712,7 @@ jobs:
                 zlib1g \
                 zlib1g-dev \
                 exuberant-ctags \
+                unzip \
                 curl \
                 wget
       - uses: actions/checkout@v2
