@@ -9,5 +9,5 @@ do
     rm -rf corpus_$target
     unzip -q public.zip -d corpus_$target
     #run target on corpus
-    ./src/$target corpus_$target
+    ./src/$target corpus_$target || true
 done
