@@ -578,7 +578,8 @@ jobs:
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
       - run: ./autogen.sh
       - run: export RUSTFLAGS="-Zprofile"
-      - run: RUSTFLAGS="-Zprofile" CFLAGS="${DEFAULT_CFLAGS} -fprofile-arcs -ftest-coverage -O0 -ggdb" ./configure
+      - run: export CARGO_TERM_VERBOSE="true"
+      - run: RUSTFLAGS="-Zprofile" CARGO_TERM_VERBOSE="true" CFLAGS="${DEFAULT_CFLAGS} -fprofile-arcs -ftest-coverage -O0 -ggdb" ./configure
       - run: make -j2
       - name: Extracting suricata-verify
         run: tar xf prep/suricata-verify.tar.gz
