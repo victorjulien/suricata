@@ -594,6 +594,7 @@ jobs:
           cd ../libhtp/htp
           gcov-9 -p *.[ch]
           llvm-cov-10 gcov -p rust/src/*/*.rs
+          find . -type f
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
