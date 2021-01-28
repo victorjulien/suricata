@@ -11,7 +11,7 @@ if !DEBUG
 RELEASE = --release
 endif
 
-NIGHTLY_ARGS = -Z coverage
+NIGHTLY_ARGS = -Z profile
 if RUST_BUILD_STD
 NIGHTLY_ARGS += -Z build-std
 endif
