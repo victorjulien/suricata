@@ -557,11 +557,11 @@ jobs:
                 make \
                 parallel \
                 python3-yaml \
-                rustc \
                 software-properties-common \
                 zlib1g \
                 zlib1g-dev \
                 exuberant-ctags \
+                llvm-10 \
                 curl
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -569,6 +569,7 @@ jobs:
           name: prep
           path: prep
       - run: tar xf prep/libhtp.tar.gz
+      - run: curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain nightly -y
       - name: Setup cbindgen
         run: |
           mkdir -p $HOME/.cargo/bin
@@ -577,7 +578,11 @@ jobs:
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
       - run: ./autogen.sh
       - run: CFLAGS="${DEFAULT_CFLAGS} -fprofile-arcs -ftest-coverage -O0 -ggdb" ./configure
+        env:
+          RUSTFLAGS: "-Zprofile"
       - run: make -j2
+        env:
+          RUSTFLAGS: "-Zprofile"
       - name: Extracting suricata-verify
         run: tar xf prep/suricata-verify.tar.gz
       - name: Running suricata-verify
@@ -588,6 +593,7 @@ jobs:
           gcov-9 -p *.[ch]
           cd ../libhtp/htp
           gcov-9 -p *.[ch]
+          llvm-cov-10 gcov -p rust/src/*/*.rs
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
