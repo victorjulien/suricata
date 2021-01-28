@@ -11,9 +11,9 @@ if !DEBUG
 RELEASE = --release
 endif
 
-NIGHTLY_ARGS = -Zinstrument-coverage
+NIGHTLY_RUSTC_ARGS = -Z instrument-coverage
 if RUST_BUILD_STD
-NIGHTLY_ARGS += -Z build-std
+NIGHTLY_ARGS = -Z build-std
 endif
 
 if HAVE_LUA
@@ -43,6 +43,7 @@ else
 	@rustup_home@ \
 		CARGO_HOME="$(CARGO_HOME)" \
 		CARGO_TARGET_DIR="$(abs_top_builddir)/rust/target" \
+        RUSTFLAGS="$(NIGHTLY_RUSTC_ARGS)" \
 		$(CARGO) build -v $(RELEASE) $(NIGHTLY_ARGS) \
 			--features "$(RUST_FEATURES)" $(RUST_TARGET)
 endif
