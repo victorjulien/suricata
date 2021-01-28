@@ -589,12 +589,10 @@ jobs:
         run: python3 ./suricata-verify/run.py
       - name: Gcov
         run: |
-          cd src
-          gcov-9 -p *.[ch]
-          cd ../libhtp/htp
-          gcov-9 -p *.[ch]
-          llvm-cov-10 gcov -p rust/src/*/*.rs
           find . -type f
+          gcov-9 -p src/*.[ch]
+          gcov-9 -p libhtp/htp/*.[ch]
+          llvm-cov-10 gcov -p rust/src/*/*.rs
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
