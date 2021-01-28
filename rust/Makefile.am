@@ -11,8 +11,9 @@ if !DEBUG
 RELEASE = --release
 endif
 
+NIGHTLY_ARGS = -Z coverage
 if RUST_BUILD_STD
-NIGHTLY_ARGS = -Z build-std
+NIGHTLY_ARGS += -Z build-std
 endif
 
 if HAVE_LUA
