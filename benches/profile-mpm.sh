@@ -35,7 +35,7 @@ if [ ! -f src/suricata ]; then
     exit 1
 fi
 HAS_PROFILING=$(src/suricata --build-info|grep PROFILING|wc -l)
-if [ $HAS_PROFILING -ne 1] then
+if [ $HAS_PROFILING -ne 1]; then
     echo "ERROR suricata should be built with --enable-profiling"
     exit 1
 fi
