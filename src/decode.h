@@ -508,6 +508,7 @@ typedef struct Packet_
     /* coccinelle: Packet:flowflags:FLOW_PKT_ */
 
     uint8_t app_update_direction; // enum StreamUpdateDir
+    uint8_t sig_mask;             // TODO type
 
     /* Pkt Flags */
     uint32_t flags;
