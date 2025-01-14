@@ -1106,6 +1106,61 @@ error:
     return -1;
 }
 
+static const char *SignatureHookTypeToString(enum SignatureHookType t)
+{
+    switch (t) {
+        case SIGNATURE_HOOK_TYPE_NOT_SET:
+            return "not_set";
+        case SIGNATURE_HOOK_TYPE_APP:
+            return "app";
+            // case SIGNATURE_HOOK_TYPE_PKT:
+            //     return "pkt";
+    }
+    return "unknown";
+}
+
+static SignatureHook SetAppHook(const AppProto alproto, int progress)
+{
+    SignatureHook h = {
+        .type = SIGNATURE_HOOK_TYPE_APP,
+        .t.app.alproto = alproto,
+        .t.app.app_progress = progress,
+    };
+    return h;
+}
+
+static int SigParseProtoHookApp(Signature *s, const char *p, const char *h)
+{
+    if (strcmp(h, "request_complete") == 0) {
+        s->flags |= SIG_FLAG_TOSERVER;
+        s->init_data->hook = SetAppHook(s->alproto,
+                AppLayerParserGetStateProgressCompletionStatus(s->alproto, STREAM_TOSERVER));
+    } else if (strcmp(h, "response_complete") == 0) {
+        s->flags |= SIG_FLAG_TOCLIENT;
+        s->init_data->hook = SetAppHook(s->alproto,
+                AppLayerParserGetStateProgressCompletionStatus(s->alproto, STREAM_TOCLIENT));
+    } else {
+        const int progress_ts = AppLayerParserGetStateIdByName(
+                IPPROTO_TCP /* TODO */, s->alproto, h, STREAM_TOSERVER);
+        if (progress_ts >= 0) {
+            s->flags |= SIG_FLAG_TOSERVER;
+            s->init_data->hook = SetAppHook(s->alproto, progress_ts);
+        } else {
+            const int progress_tc = AppLayerParserGetStateIdByName(
+                    IPPROTO_TCP /* TODO */, s->alproto, h, STREAM_TOCLIENT);
+            if (progress_tc < 0) {
+                return -1;
+            }
+            s->flags |= SIG_FLAG_TOCLIENT;
+            s->init_data->hook = SetAppHook(s->alproto, progress_tc);
+        }
+    }
+    SCLogNotice("protocol:%s hook:%s: type:%s alproto:%u hook:%d", p, h,
+            SignatureHookTypeToString(s->init_data->hook.type), s->init_data->hook.t.app.alproto,
+            s->init_data->hook.t.app.app_progress);
+    return 0;
+}
+
 /**
  * \brief Parses the protocol supplied by the Signature.
  *
@@ -1121,13 +1176,35 @@ error:
 static int SigParseProto(Signature *s, const char *protostr)
 {
     SCEnter();
+    if (strlen(protostr) > 32)
+        return -1;
 
-    int r = DetectProtoParse(&s->proto, (char *)protostr);
+    char proto[33];
+    strlcpy(proto, protostr, 33);
+    const char *p = proto;
+    const char *h = NULL;
+
+    bool has_hook = strchr(proto, ':') != NULL;
+    if (has_hook) {
+        char *xsaveptr = NULL;
+        p = strtok_r(proto, ":", &xsaveptr);
+        h = strtok_r(NULL, ":", &xsaveptr);
+        SCLogNotice("p: '%s' h: '%s'", p, h);
+    }
+
+    int r = DetectProtoParse(&s->proto, p);
     if (r < 0) {
-        s->alproto = AppLayerGetProtoByName((char *)protostr);
+        s->alproto = AppLayerGetProtoByName(p);
         /* indicate that the signature is app-layer */
         if (s->alproto != ALPROTO_UNKNOWN) {
             s->flags |= SIG_FLAG_APPLAYER;
+
+            if (h) {
+                if (SigParseProtoHookApp(s, p, h) < 0) {
+                    SCLogError("protocol \"%s\" does not support hook \"%s\"", p, h);
+                    SCReturnInt(-1);
+                }
+            }
 
             AppLayerProtoDetectSupportedIpprotos(s->alproto, s->proto.proto);
         }
@@ -1137,7 +1214,7 @@ static int SigParseProto(Signature *s, const char *protostr)
                        "is not yet supported OR detection has been disabled for "
                        "protocol through the yaml option "
                        "app-layer.protocols.%s.detection-enabled",
-                    protostr, protostr);
+                    p, p);
             SCReturnInt(-1);
         }
     }
@@ -2044,6 +2121,21 @@ static int SigValidate(DetectEngineCtx *de_ctx, Signature *s)
                 SCLogDebug("b->id %d nlists %d", b->id, nlists);
                 bufdir[b->id].ts += (app->dir == 0);
                 bufdir[b->id].tc += (app->dir == 1);
+
+                /* only allow rules to use the hook for engines at that
+                 * exact progress for now. */
+                if (s->init_data->hook.type == SIGNATURE_HOOK_TYPE_APP) {
+                    if ((s->flags & SIG_FLAG_TOSERVER) && (app->dir == 0) &&
+                            app->progress != s->init_data->hook.t.app.app_progress) {
+                        SCLogError("engine progress value doesn't match hook");
+                        SCReturnInt(0);
+                    }
+                    if ((s->flags & SIG_FLAG_TOCLIENT) && (app->dir == 1) &&
+                            app->progress != s->init_data->hook.t.app.app_progress) {
+                        SCLogError("engine progress value doesn't match hook");
+                        SCReturnInt(0);
+                    }
+                }
             }
         }
 
