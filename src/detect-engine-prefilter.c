@@ -710,7 +710,7 @@ int PrefilterSetupRuleGroup(DetectEngineCtx *de_ctx, SigGroupHead *sgh)
                         add->sigs[add->sigs_cnt].value = app->alproto;
                         add->sigs_cnt++;
 
-                        char engine_name[64];
+                        char engine_name[80];
                         snprintf(engine_name, sizeof(engine_name), "%s:%s:non_pf",
                                 AppProtoToString(app->alproto), buf->name);
                         char *engine_name_heap = SCStrdup(engine_name);
