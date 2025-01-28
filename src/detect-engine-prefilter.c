@@ -58,6 +58,7 @@
 
 #include "util-profiling.h"
 #include "util-validate.h"
+#include "util-hash-string.h"
 
 static int PrefilterStoreGetId(DetectEngineCtx *de_ctx,
         const char *name, void (*FreeFunc)(void *));
@@ -546,6 +547,24 @@ static void PrefilterFrameNonPF(DetectEngineThreadCtx *det_ctx, const void *pect
     }
 }
 
+static uint32_t NonPFNamesHash(HashTable *h, void *data, uint16_t _len)
+{
+    const char *str = data;
+    return StringHashDjb2((const uint8_t *)str, strlen(str)) % h->array_size;
+}
+
+static char NonPFNamesCompare(void *data1, uint16_t _len1, void *data2, uint16_t len2)
+{
+    const char *s1 = data1;
+    const char *s2 = data2;
+    return StringHashCompareFunc(data1, strlen(s1), data2, strlen(s2));
+}
+
+static void NonPFNamesFree(void *data)
+{
+    SCFree(data);
+}
+
 struct TxNonPFData {
     AppProto alproto;
     int dir; // 0 toserver 1 toclient
@@ -553,6 +572,7 @@ struct TxNonPFData {
     int progress;
     uint32_t sigs_cnt;
     struct PrefilterNonPFDataSig *sigs;
+    const char *app_name;
 };
 
 static uint32_t TxNonPFHash(HashListTable *h, void *data, uint16_t _len)
@@ -613,6 +633,12 @@ int PrefilterSetupRuleGroup(DetectEngineCtx *de_ctx, SigGroupHead *sgh)
         return -1;
     }
 
+    if (de_ctx->non_pf_engine_names == NULL) {
+        de_ctx->non_pf_engine_names =
+                HashTableInit(512, NonPFNamesHash, NonPFNamesCompare, NonPFNamesFree);
+        BUG_ON(de_ctx->non_pf_engine_names == NULL);
+    }
+
 #ifdef NONPF_PKT_STATS
     uint32_t nonpf_pkt_alproto = 0;
     uint32_t nonpf_pkt_dsize = 0;
@@ -650,12 +676,15 @@ int PrefilterSetupRuleGroup(DetectEngineCtx *de_ctx, SigGroupHead *sgh)
                                 AppProtoEquals(s->alproto, app->alproto)))
                         continue;
 
-                    struct TxNonPFData lookup = { .alproto = app->alproto,
+                    struct TxNonPFData lookup = {
+                        .alproto = app->alproto,
                         .dir = app->dir,
                         .sm_list = app->sm_list,
                         .progress = app->progress,
                         .sigs_cnt = 0,
-                        .sigs = NULL };
+                        .sigs = NULL,
+                        .app_name = NULL,
+                    };
                     struct TxNonPFData *e = HashListTableLookup(tx_engines_hash, &lookup, 0);
                     if (e != NULL) {
                         BUG_ON(e->sigs_cnt == max_sids);
@@ -680,6 +709,18 @@ int PrefilterSetupRuleGroup(DetectEngineCtx *de_ctx, SigGroupHead *sgh)
                         add->sigs[add->sigs_cnt].sid = s->num;
                         add->sigs[add->sigs_cnt].value = app->alproto;
                         add->sigs_cnt++;
+
+                        char engine_name[64];
+                        snprintf(engine_name, sizeof(engine_name), "%s:%s:non_pf",
+                                AppProtoToString(app->alproto), buf->name);
+                        char *engine_name_heap = SCStrdup(engine_name);
+                        BUG_ON(engine_name_heap == NULL);
+                        int result = HashTableAdd(de_ctx->non_pf_engine_names, engine_name_heap,
+                                strlen(engine_name_heap));
+                        BUG_ON(result != 0);
+
+                        add->app_name = engine_name_heap;
+                        SCLogDebug("engine_name_heap %s", engine_name_heap);
 
                         int ret = HashListTableAdd(tx_engines_hash, add, 0);
                         if (ret != 0) {
@@ -756,7 +797,7 @@ int PrefilterSetupRuleGroup(DetectEngineCtx *de_ctx, SigGroupHead *sgh)
         memcpy((uint8_t *)&data->array, t->sigs, t->sigs_cnt * sizeof(data->array[0]));
         // TODO proper free func
         if (PrefilterAppendTxEngine(de_ctx, sgh, PrefilterTxNonPF, t->alproto, t->progress,
-                    (void *)data, free, "hmmm what name to pick?") < 0) {
+                    (void *)data, free, t->app_name) < 0) {
             SCFree(data);
             goto error;
         }
@@ -795,7 +836,7 @@ int PrefilterSetupRuleGroup(DetectEngineCtx *de_ctx, SigGroupHead *sgh)
         // TODO free func
         // TODO engine name
         if (PrefilterAppendFrameEngine(de_ctx, sgh, PrefilterFrameNonPF, ALPROTO_UNKNOWN,
-                    FRAME_ANY_TYPE, (void *)data, free, "pkt::non_pf") < 0) {
+                    FRAME_ANY_TYPE, (void *)data, free, "frame::non_pf") < 0) {
             SCFree(data);
             goto error;
         }

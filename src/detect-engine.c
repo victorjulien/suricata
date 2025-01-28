@@ -2755,6 +2755,9 @@ void DetectEngineCtxFree(DetectEngineCtx *de_ctx)
         SCDetectRequiresStatusFree(de_ctx->requirements);
     }
 
+    if (de_ctx->non_pf_engine_names) {
+        HashTableFree(de_ctx->non_pf_engine_names);
+    }
     SCFree(de_ctx);
     //DetectAddressGroupPrintMemory();
     //DetectSigGroupPrintMemory();

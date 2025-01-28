@@ -1080,6 +1080,8 @@ typedef struct DetectEngineCtx_ {
 
     /* number of signatures using filestore, limited as u16 */
     uint16_t filestore_cnt;
+
+    HashTable *non_pf_engine_names;
 } DetectEngineCtx;
 
 /* Engine groups profiles (low, medium, high, custom) */
