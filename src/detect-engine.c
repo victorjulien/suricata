@@ -818,7 +818,7 @@ int DetectEngineAppInspectionEngine2Signature(DetectEngineCtx *de_ctx, Signature
             .progress = (uint16_t)s->init_data->hook.t.app.app_progress,
             .sm_list = (uint16_t)s->init_data->hook.sm_list,
             .sm_list_base = (uint16_t)s->init_data->hook.sm_list,
-            .dir = dir,
+            .dir = (uint8_t)dir,
         };
         AppendAppInspectEngine(de_ctx, &t, s, NULL, mpm_list, files_id, &last_id, &head_is_mpm);
     }
