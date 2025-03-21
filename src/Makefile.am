@@ -462,6 +462,7 @@ noinst_HEADERS = \
 	tm-threads-common.h \
 	tm-threads.h \
 	tree.h \
+	tx-bit.h \
 	interval-tree.h \
 	unix-manager.h \
 	util-action.h \
@@ -1033,6 +1034,7 @@ libsuricata_c_a_SOURCES = \
 	tm-queuehandlers.c \
 	tm-queues.c \
 	tm-threads.c \
+	tx-bit.c \
 	unix-manager.c \
 	util-action.c \
 	util-affinity.c \
