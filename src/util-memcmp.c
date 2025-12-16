@@ -442,6 +442,7 @@ static inline int TestWrapMemcmp(const uint8_t *s1, const uint8_t *s2, size_t le
 // #undef DRIVER
 // #undef BIGSZ
 
+#ifdef PROFILING
 #define TEST_RUNS 1000000
 #define PKT_SMALL 64
 #define PKT_ETH   1418
@@ -488,6 +489,7 @@ static int PktDriver(TestFunc FPtr, size_t size)
     SCFree(seg_nomatch);
     return 1;
 }
+#endif
 
 #undef TEST_RUNS
 
