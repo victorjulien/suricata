@@ -360,29 +360,40 @@ static inline int TestWrapMemcmp(const uint8_t *s1, const uint8_t *s2, size_t le
     return (memcmp(s1, s2, len) == 0) ? 0 : 1;
 }
 
+typedef int (*TestFunc)(const uint8_t *a, const uint8_t *b, size_t sz);
+
+#define TEST_RUNS 10000
+/* patterns actually used with Tolower in our codebase */
+static int RealisticDriver(TestFunc FPtr)
+{
+    int res = 0;
+    uint64_t ticks_start = UtilCpuGetTicks();
+    for (int t = 0; t < TEST_RUNS; t++) {
+        for (int i = 0; used[i] != NULL; i++) {
+            size_t alen = strlen(used[i]) - 1;
+            for (int j = 0; used[j] != NULL; j++) {
+                size_t blen = strlen(used[j]) - 1;
+                res += (FPtr)((const uint8_t *)used[i], (const uint8_t *)used[j],
+                        (alen < blen) ? alen : blen);
+            }
+        }
+    }
+    uint64_t ticks_end = UtilCpuGetTicks();
+    printf("real: %6" PRIu64 "k: ", ((uint64_t)(ticks_end - ticks_start)) / 1000);
+    if (res != (504 * TEST_RUNS)) {
+        SCLogNotice("%d %" PRIu64 "kn", res, ((uint64_t)(ticks_end - ticks_start)) / 1000);
+        return 0;
+    }
+    return 1;
+}
+#undef TEST_RUNS
+
 #define BIGSZ 1024 * 1024
 #define DRIVER(f)                                                                                  \
     uint8_t *big = SCCalloc(1, BIGSZ);                                                             \
     memset(big, 'a', BIGSZ);                                                                       \
     int res = 0;                                                                                   \
     uint64_t ticks_start = UtilCpuGetTicks();                                                      \
-    for (int t = 0; t < TEST_RUNS; t++) {                                                          \
-        for (int i = 0; used[i] != NULL; i++) {                                                    \
-            size_t alen = strlen(used[i]) - 1;                                                     \
-            for (int j = 0; used[j] != NULL; j++) {                                                \
-                size_t blen = strlen(used[j]) - 1;                                                 \
-                res += (f)((uint8_t *)used[i], (uint8_t *)used[j], (alen < blen) ? alen : blen);   \
-            }                                                                                      \
-        }                                                                                          \
-    }                                                                                              \
-    uint64_t ticks_end = UtilCpuGetTicks();                                                        \
-    printf("real: %6" PRIu64 "k - ", ((uint64_t)(ticks_end - ticks_start)) / 1000);                \
-    if (res != (504 * TEST_RUNS)) {                                                                \
-        SCLogNotice("%d %" PRIu64 "k\n", res, ((uint64_t)(ticks_end - ticks_start)) / 1000);       \
-        return 0;                                                                                  \
-    }                                                                                              \
-    res = 0;                                                                                       \
-    ticks_start = UtilCpuGetTicks();                                                               \
     for (int t = 0; t < TEST_RUNS; t++) {                                                          \
         for (int i = 0; syn[i] != NULL; i++) {                                                     \
             size_t alen = strlen(syn[i]) - 1;                                                      \
@@ -392,7 +403,7 @@ static inline int TestWrapMemcmp(const uint8_t *s1, const uint8_t *s2, size_t le
             }                                                                                      \
         }                                                                                          \
     }                                                                                              \
-    ticks_end = UtilCpuGetTicks();                                                                 \
+    uint64_t ticks_end = UtilCpuGetTicks();                                                        \
     printf("syn: %6" PRIu64 "k - ", ((uint64_t)(ticks_end - ticks_start)) / 1000);                 \
     if (res != (128 * TEST_RUNS)) {                                                                \
         SCLogNotice("%d %" PRIu64 "k\n", res, ((uint64_t)(ticks_end - ticks_start)) / 1000);       \
@@ -448,7 +459,6 @@ static inline int TestWrapMemcmp(const uint8_t *s1, const uint8_t *s2, size_t le
 #define PKT_ETH   1418
 #define PKT_JUMBO 9000
 
-typedef int (*TestFunc)(const uint8_t *a, const uint8_t *b, size_t sz);
 static int PktDriver(TestFunc FPtr, size_t size)
 {
     uint8_t *pkt = SCCalloc(1, size);
@@ -499,6 +509,7 @@ static int MemcmpTestExactLibcMemcmp(void)
 {
 #ifdef PROFILING
     DRIVER(TestWrapMemcmp);
+    RealisticDriver(TestWrapMemcmp);
     PktDriver(TestWrapMemcmp, PKT_SMALL);
     PktDriver(TestWrapMemcmp, PKT_ETH);
     PktDriver(TestWrapMemcmp, PKT_JUMBO);
@@ -510,6 +521,7 @@ static int MemcmpTestExactSCMemcmp(void)
 {
 #ifdef PROFILING
     DRIVER(SCMemcmp);
+    RealisticDriver(SCMemcmp);
     PktDriver(SCMemcmp, PKT_SMALL);
     PktDriver(SCMemcmp, PKT_ETH);
     PktDriver(SCMemcmp, PKT_JUMBO);
@@ -522,6 +534,7 @@ static int MemcmpTestExactSCMemcmpSSE3(void)
 #if defined(__SSE3__)
 #ifdef PROFILING
     DRIVER(SCMemcmpSSE3);
+    RealisticDriver(SCMemcmpSSE3);
     PktDriver(SCMemcmpSSE3, PKT_SMALL);
     PktDriver(SCMemcmpSSE3, PKT_ETH);
     PktDriver(SCMemcmpSSE3, PKT_JUMBO);
@@ -535,6 +548,7 @@ static int MemcmpTestExactSCMemcmpSSE42(void)
 #if defined(__SSE4_2__)
 #ifdef PROFILING
     DRIVER(SCMemcmpSSE42);
+    RealisticDriver(SCMemcmpSSE42);
     PktDriver(SCMemcmpSSE42, PKT_SMALL);
     PktDriver(SCMemcmpSSE42, PKT_ETH);
     PktDriver(SCMemcmpSSE42, PKT_JUMBO);
@@ -548,6 +562,7 @@ static int MemcmpTestExactSCMemcmpAVX2(void)
 #ifdef PROFILING
 #ifdef __AVX2__
     DRIVER(SCMemcmpAVX2);
+    RealisticDriver(SCMemcmpAVX2);
     PktDriver(SCMemcmpAVX2, PKT_SMALL);
     PktDriver(SCMemcmpAVX2, PKT_ETH);
     PktDriver(SCMemcmpAVX2, PKT_JUMBO);
@@ -561,6 +576,7 @@ static int MemcmpTestExactSCMemcmpAVX2_512(void)
 #ifdef PROFILING
 #ifdef __AVX2__
     DRIVER(SCMemcmpAVX2_512);
+    RealisticDriver(SCMemcmpAVX2_512);
     PktDriver(SCMemcmpAVX2_512, PKT_SMALL);
     PktDriver(SCMemcmpAVX2_512, PKT_ETH);
     PktDriver(SCMemcmpAVX2_512, PKT_JUMBO);
@@ -574,6 +590,7 @@ static int MemcmpTestExactSCMemcmpAVX2_1024(void)
 #ifdef PROFILING
 #ifdef __AVX2__
     DRIVER(SCMemcmpAVX2_1024);
+    RealisticDriver(SCMemcmpAVX2_1024);
     PktDriver(SCMemcmpAVX2_1024, PKT_SMALL);
     PktDriver(SCMemcmpAVX2_1024, PKT_ETH);
     PktDriver(SCMemcmpAVX2_1024, PKT_JUMBO);
@@ -587,6 +604,7 @@ static int MemcmpTestExactSCMemcmpAVX512_LT16(void)
 #ifdef PROFILING
 #if defined(__AVX512VBMI2__)
     DRIVER(SCMemcmpAVX512_LT16);
+    RealisticDriver(SCMemcmpAVX512_LT16);
     PktDriver(SCMemcmpAVX512_LT16, PKT_SMALL);
     PktDriver(SCMemcmpAVX512_LT16, PKT_ETH);
     PktDriver(SCMemcmpAVX512_LT16, PKT_JUMBO);
@@ -599,6 +617,7 @@ static int MemcmpTestExactSCMemcmpAVX512_LT32(void)
 #ifdef PROFILING
 #if defined(__AVX512VBMI2__)
     DRIVER(SCMemcmpAVX512_LT32);
+    RealisticDriver(SCMemcmpAVX512_LT32);
     PktDriver(SCMemcmpAVX512_LT32, PKT_SMALL);
     PktDriver(SCMemcmpAVX512_LT32, PKT_ETH);
     PktDriver(SCMemcmpAVX512_LT32, PKT_JUMBO);
@@ -611,6 +630,7 @@ static int MemcmpTestExactSCMemcmpAVX512_LT64(void)
 #ifdef PROFILING
 #if defined(__AVX512VBMI2__)
     DRIVER(SCMemcmpAVX512_LT64);
+    RealisticDriver(SCMemcmpAVX512_LT64);
     PktDriver(SCMemcmpAVX512_LT64, PKT_SMALL);
     PktDriver(SCMemcmpAVX512_LT64, PKT_ETH);
     PktDriver(SCMemcmpAVX512_LT64, PKT_JUMBO);
@@ -623,6 +643,7 @@ static int MemcmpTestExactSCMemcmpAVX512_128(void)
 #ifdef PROFILING
 #if defined(__AVX512VL__) && defined(__AVX512BW__)
     DRIVER(SCMemcmpAVX512_128);
+    RealisticDriver(SCMemcmpAVX512_128);
     PktDriver(SCMemcmpAVX512_128, PKT_SMALL);
     PktDriver(SCMemcmpAVX512_128, PKT_ETH);
     PktDriver(SCMemcmpAVX512_128, PKT_JUMBO);
@@ -636,6 +657,7 @@ static int MemcmpTestExactSCMemcmpAVX512_256(void)
 #ifdef PROFILING
 #if defined(__AVX512VL__) && defined(__AVX512BW__)
     DRIVER(SCMemcmpAVX512_256);
+    RealisticDriver(SCMemcmpAVX512_256);
     PktDriver(SCMemcmpAVX512_256, PKT_SMALL);
     PktDriver(SCMemcmpAVX512_256, PKT_ETH);
     PktDriver(SCMemcmpAVX512_256, PKT_JUMBO);
@@ -649,6 +671,7 @@ static int MemcmpTestExactSCMemcmpAVX512_512(void)
 #ifdef PROFILING
 #if defined(__AVX512VL__) && defined(__AVX512BW__)
     DRIVER(SCMemcmpAVX512_512);
+    RealisticDriver(SCMemcmpAVX512_512);
     PktDriver(SCMemcmpAVX512_512, PKT_SMALL);
     PktDriver(SCMemcmpAVX512_512, PKT_ETH);
     PktDriver(SCMemcmpAVX512_512, PKT_JUMBO);
@@ -662,6 +685,7 @@ static int MemcmpTestExactSCMemcmpAVX512_2048(void)
 #ifdef PROFILING
 #if defined(__AVX512VL__) && defined(__AVX512BW__)
     DRIVER(SCMemcmpAVX512_2048);
+    RealisticDriver(SCMemcmpAVX512_2048);
     PktDriver(SCMemcmpAVX512_2048, PKT_SMALL);
     PktDriver(SCMemcmpAVX512_2048, PKT_ETH);
     PktDriver(SCMemcmpAVX512_2048, PKT_JUMBO);
@@ -675,6 +699,7 @@ static int MemcmpTestExactSCMemcmpAVX512_4096(void)
 #ifdef PROFILING
 #if defined(__AVX512VL__) && defined(__AVX512BW__)
     DRIVER(SCMemcmpAVX512_4096);
+    RealisticDriver(SCMemcmpAVX512_4096);
     PktDriver(SCMemcmpAVX512_4096, PKT_SMALL);
     PktDriver(SCMemcmpAVX512_4096, PKT_ETH);
     PktDriver(SCMemcmpAVX512_4096, PKT_JUMBO);
@@ -688,6 +713,7 @@ static int MemcmpTestExactSCMemcmpAVX512_6144(void)
 #ifdef PROFILING
 #if defined(__AVX512VL__) && defined(__AVX512BW__)
     DRIVER(SCMemcmpAVX512_6144);
+    RealisticDriver(SCMemcmpAVX512_6144);
     PktDriver(SCMemcmpAVX512_6144, PKT_SMALL);
     PktDriver(SCMemcmpAVX512_6144, PKT_ETH);
     PktDriver(SCMemcmpAVX512_6144, PKT_JUMBO);
@@ -701,6 +727,7 @@ static int MemcmpTestExactSCMemcmpNeon(void)
 #ifdef PROFILING
 #if defined(__ARM_NEON)
     DRIVER(SCMemcmpNeon);
+    RealisticDriver(SCMemcmpNeon);
     PktDriver(SCMemcmpNeon, PKT_SMALL);
     PktDriver(SCMemcmpNeon, PKT_ETH);
     PktDriver(SCMemcmpNeon, PKT_JUMBO);
@@ -714,6 +741,7 @@ static int MemcmpTestExactSCMemcmpSVE(void)
 #ifdef PROFILING
 #if defined(__ARM_FEATURE_SVE)
     DRIVER(SCMemcmpSVE);
+    RealisticDriver(SCMemcmpSVE);
     PktDriver(SCMemcmpSVE, PKT_SMALL);
     PktDriver(SCMemcmpSVE, PKT_ETH);
     PktDriver(SCMemcmpSVE, PKT_JUMBO);
@@ -726,6 +754,7 @@ static int MemcmpTestLowercaseDefault(void)
 {
 #ifdef PROFILING
     DRIVER(SCMemcmpLowercase);
+    RealisticDriver(SCMemcmpLowercase);
 #endif
     return 1;
 }
@@ -734,6 +763,7 @@ static int MemcmpTestLowercaseNoSIMD(void)
 {
 #ifdef PROFILING
     DRIVER(MemcmpLowercase);
+    RealisticDriver(MemcmpLowercase);
 #endif
     return 1;
 }
@@ -743,6 +773,7 @@ static int MemcmpTestLowercaseSSE3(void)
 #if defined(__SSE3__)
 #ifdef PROFILING
     DRIVER(SCMemcmpLowercaseSSE3);
+    RealisticDriver(SCMemcmpLowercaseSSE3);
 #endif
 #endif
     return 1;
@@ -753,6 +784,7 @@ static int MemcmpTestLowercaseSSE3and(void)
 #if defined(__SSE3__)
 #ifdef PROFILING
     DRIVER(SCMemcmpLowercaseSSE3and);
+    RealisticDriver(SCMemcmpLowercaseSSE3and);
 #endif
 #endif
     return 1;
@@ -763,6 +795,7 @@ static int MemcmpTestLowercaseSSE3andload(void)
 #if defined(__SSE3__)
 #ifdef PROFILING
     DRIVER(SCMemcmpLowercaseSSE3andload);
+    RealisticDriver(SCMemcmpLowercaseSSE3andload);
 #endif
 #endif
     return 1;
@@ -773,6 +806,7 @@ static int MemcmpTestLowercaseSSE42(void)
 #if defined(__SSE4_2__)
 #ifdef PROFILING
     DRIVER(SCMemcmpLowercaseSSE42);
+    RealisticDriver(SCMemcmpLowercaseSSE42);
 #endif
 #endif
     return 1;
@@ -783,6 +817,7 @@ static int MemcmpTestLowercaseAVX2(void)
 #ifdef PROFILING
 #ifdef __AVX2__
     DRIVER(SCMemcmpLowercaseAVX2);
+    RealisticDriver(SCMemcmpLowercaseAVX2);
 #endif
 #endif
     return 1;
@@ -793,6 +828,7 @@ static int MemcmpTestLowercaseAVX512_LT16(void)
 #ifdef PROFILING
 #if defined(__AVX512VBMI2__)
     DRIVER(SCMemcmpLowercaseAVX512_LT16);
+    RealisticDriver(SCMemcmpLowercaseAVX512_LT16);
 #endif
 #endif
     return 1;
@@ -803,6 +839,7 @@ static int MemcmpTestLowercaseAVX512_LT32(void)
 #ifdef PROFILING
 #if defined(__AVX512VBMI2__)
     DRIVER(SCMemcmpLowercaseAVX512_LT32);
+    RealisticDriver(SCMemcmpLowercaseAVX512_LT32);
 #endif
 #endif
     return 1;
@@ -813,6 +850,7 @@ static int MemcmpTestLowercaseAVX512_LT64(void)
 #ifdef PROFILING
 #if defined(__AVX512VBMI2__)
     DRIVER(SCMemcmpLowercaseAVX512_LT64);
+    RealisticDriver(SCMemcmpLowercaseAVX512_LT64);
 #endif
 #endif
     return 1;
@@ -823,6 +861,7 @@ static int MemcmpTestLowercaseAVX512_128(void)
 #ifdef PROFILING
 #if defined(__AVX512VL__) && defined(__AVX512BW__)
     DRIVER(SCMemcmpLowercaseAVX512_128);
+    RealisticDriver(SCMemcmpLowercaseAVX512_128);
 #endif
 #endif
     return 1;
@@ -833,6 +872,7 @@ static int MemcmpTestLowercaseAVX512_256(void)
 #ifdef PROFILING
 #if defined(__AVX512VL__) && defined(__AVX512BW__)
     DRIVER(SCMemcmpLowercaseAVX512_256);
+    RealisticDriver(SCMemcmpLowercaseAVX512_256);
 #endif
 #endif
     return 1;
@@ -843,6 +883,7 @@ static int MemcmpTestLowercaseAVX512_512(void)
 #ifdef PROFILING
 #if defined(__AVX512VL__) && defined(__AVX512BW__)
     DRIVER(SCMemcmpLowercaseAVX512_512);
+    RealisticDriver(SCMemcmpLowercaseAVX512_512);
 #endif
 #endif
     PASS;
@@ -853,6 +894,7 @@ static int MemcmpTestLowercaseSVE(void)
 #ifdef PROFILING
 #if defined(__ARM_FEATURE_SVE)
     DRIVER(SCMemcmpLowercaseSVE);
+    RealisticDriver(SCMemcmpLowercaseSVE);
 #endif
 #endif
     PASS;
@@ -863,6 +905,7 @@ static int MemcmpTestLowercaseNeon(void)
 #ifdef PROFILING
 #if defined(__ARM_NEON)
     DRIVER(SCMemcmpLowercaseNeon);
+    RealisticDriver(SCMemcmpLowercaseNeon);
 #endif
 #endif
     PASS;
