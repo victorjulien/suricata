@@ -370,9 +370,9 @@ static int RealisticDriver(TestFunc FPtr)
     uint64_t ticks_start = UtilCpuGetTicks();
     for (int t = 0; t < TEST_RUNS; t++) {
         for (int i = 0; used[i] != NULL; i++) {
-            size_t alen = strlen(used[i]) - 1;
+            size_t alen = strlen(used[i]);
             for (int j = 0; used[j] != NULL; j++) {
-                size_t blen = strlen(used[j]) - 1;
+                size_t blen = strlen(used[j]);
                 res += (FPtr)((const uint8_t *)used[i], (const uint8_t *)used[j],
                         (alen < blen) ? alen : blen);
             }
@@ -396,16 +396,16 @@ static int RealisticDriver(TestFunc FPtr)
     uint64_t ticks_start = UtilCpuGetTicks();                                                      \
     for (int t = 0; t < TEST_RUNS; t++) {                                                          \
         for (int i = 0; syn[i] != NULL; i++) {                                                     \
-            size_t alen = strlen(syn[i]) - 1;                                                      \
+            size_t alen = strlen(syn[i]);                                                          \
             for (int j = 0; syn[j] != NULL; j++) {                                                 \
-                size_t blen = strlen(syn[j]) - 1;                                                  \
+                size_t blen = strlen(syn[j]);                                                      \
                 res += (f)((uint8_t *)syn[i], (uint8_t *)syn[j], (alen < blen) ? alen : blen);     \
             }                                                                                      \
         }                                                                                          \
     }                                                                                              \
     uint64_t ticks_end = UtilCpuGetTicks();                                                        \
     printf("syn: %6" PRIu64 "k - ", ((uint64_t)(ticks_end - ticks_start)) / 1000);                 \
-    if (res != (128 * TEST_RUNS)) {                                                                \
+    if (res != (150 * TEST_RUNS)) {                                                                \
         SCLogNotice("%d %" PRIu64 "k\n", res, ((uint64_t)(ticks_end - ticks_start)) / 1000);       \
         return 0;                                                                                  \
     }                                                                                              \
@@ -413,7 +413,7 @@ static int RealisticDriver(TestFunc FPtr)
     ticks_start = UtilCpuGetTicks();                                                               \
     for (int t = 0; t < 10; t++) {                                                                 \
         for (int i = 0; used[i] != NULL; i++) {                                                    \
-            size_t alen = strlen(used[i]) - 1;                                                     \
+            size_t alen = strlen(used[i]);                                                         \
             for (size_t j = 0; j < BIGSZ; j++) {                                                   \
                 if (BIGSZ - j < alen)                                                              \
                     continue;                                                                      \
@@ -424,7 +424,7 @@ static int RealisticDriver(TestFunc FPtr)
     }                                                                                              \
     ticks_end = UtilCpuGetTicks();                                                                 \
     printf("stream1: %6" PRIu64 "k - ", ((uint64_t)(ticks_end - ticks_start)) / 1000);             \
-    if (res != 241171330) {                                                                        \
+    if (res != 241171100) {                                                                        \
         SCLogNotice("%d %" PRIu64 "k\n", res, ((uint64_t)(ticks_end - ticks_start)) / 1000);       \
         return 0;                                                                                  \
     }                                                                                              \
@@ -432,7 +432,7 @@ static int RealisticDriver(TestFunc FPtr)
     ticks_start = UtilCpuGetTicks();                                                               \
     for (int t = 0; t < 10; t++) {                                                                 \
         for (int i = 0; syn[i] != NULL; i++) {                                                     \
-            size_t alen = strlen(syn[i]) - 1;                                                      \
+            size_t alen = strlen(syn[i]);                                                          \
                                                                                                    \
             for (size_t j = 0; j < BIGSZ; j++) {                                                   \
                 if (BIGSZ - j < alen)                                                              \
@@ -444,7 +444,7 @@ static int RealisticDriver(TestFunc FPtr)
     }                                                                                              \
     ticks_end = UtilCpuGetTicks();                                                                 \
     printf("stream2: %6" PRIu64 "k - ", ((uint64_t)(ticks_end - ticks_start)) / 1000);             \
-    if (res != 125747460) {                                                                        \
+    if (res != 136233100) {                                                                        \
         SCLogNotice("%d %" PRIu64 "k\n", res, ((uint64_t)(ticks_end - ticks_start)) / 1000);       \
         return 0;                                                                                  \
     }                                                                                              \
