@@ -251,9 +251,11 @@ static int RealisticDriver(TestFunc FPtr)
     return 1;
 }
 
+#undef TEST_RUNS
 #define PKT_SMALL 64
 #define PKT_ETH   1418
 #define PKT_JUMBO 9000
+#define TEST_RUNS 100000
 
 static int PktDriver(TestFunc FPtr, size_t size)
 {
@@ -316,7 +318,7 @@ static int B16Driver(TestFunc FPtr)
         }
     }
     uint64_t ticks_end = UtilCpuGetTicks();
-    printf("16b: %8" PRIu64 "k - %d ", ((uint64_t)(ticks_end - ticks_start) / (uint64_t)1000), res);
+    printf("16b: %8" PRIu64 "k - ", ((uint64_t)(ticks_end - ticks_start) / (uint64_t)1000));
     SCFree(b);
     return res == 2031585;
 }
