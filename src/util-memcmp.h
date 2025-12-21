@@ -878,15 +878,16 @@ static char scmemcmp_sse3_delta[16] __attribute__((aligned(16))) = {
 static inline int SCMemcmpLowercaseSSE3(const uint8_t *s1, const uint8_t *s2, size_t len)
 {
     size_t offset = 0;
-    /* setup registers for upper to lower conversion */
-    __m128i uc_low = _mm_load_si128((const __m128i *)scmemcmp_sse3_uc_low);
-    __m128i uc_high = _mm_load_si128((const __m128i *)scmemcmp_sse3_uc_high);
-    __m128i delta = _mm_load_si128((const __m128i *)scmemcmp_sse3_delta);
 
     do {
         if (likely(len - offset < SCMEMCMP_BYTES)) {
             return MemcmpLowercase(s1, s2, len - offset);
         }
+
+        /* setup registers for upper to lower conversion */
+        __m128i uc_low = _mm_load_si128((const __m128i *)scmemcmp_sse3_uc_low);
+        __m128i uc_high = _mm_load_si128((const __m128i *)scmemcmp_sse3_uc_high);
+        __m128i delta = _mm_load_si128((const __m128i *)scmemcmp_sse3_delta);
 
         /* unaligned loading of the bytes to compare */
         __m128i b2 = _mm_lddqu_si128((const __m128i *)s2);
