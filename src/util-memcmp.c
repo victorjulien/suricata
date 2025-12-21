@@ -218,143 +218,6 @@ const char *used[] = {
     NULL,
 };
 
-const char *syn[] = {
-    "1",
-    "2a",
-    "4aaa",
-    "8aaaaaaa",
-    "16aaaaaaaaaaaaaa",
-    "32aaaaaaaaaaaaaa32aaaaaaaaaaaaaa",
-    "64aaaaaaaaaaaaaa64aaaaaaaaaaaaaa64aaaaaaaaaaaaaa64aaaaaaaaaaaaaa",
-    "128aaaaaaaaaaaaaaaaaaaaaaaaaaaaa128aaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "128aaaaaaaaaaaaaaaaaaaaaaaaaaaaa128aaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-    "256aaaaaaaaaaaaaaaaaaaaaaaaaaaaa256aaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "256aaaaaaaaaaaaaaaaaaaaaaaaaaaaa256aaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "256aaaaaaaaaaaaaaaaaaaaaaaaaaaaa256aaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "256aaaaaaaaaaaaaaaaaaaaaaaaaaaaa256aaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-    "512aaaaaaaaaaaaaaaaaaaaaaaaaaaaa512aaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "512aaaaaaaaaaaaaaaaaaaaaaaaaaaaa512aaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "512aaaaaaaaaaaaaaaaaaaaaaaaaaaaa512aaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "512aaaaaaaaaaaaaaaaaaaaaaaaaaaaa512aaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "512aaaaaaaaaaaaaaaaaaaaaaaaaaaaa512aaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "512aaaaaaaaaaaaaaaaaaaaaaaaaaaaa512aaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "512aaaaaaaaaaaaaaaaaaaaaaaaaaaaa512aaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "512aaaaaaaaaaaaaaaaaaaaaaaaaaaaa512aaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-    "1024aaaaaaaaaaaaaaaaaaaaaaaaaaaa1024aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "1024aaaaaaaaaaaaaaaaaaaaaaaaaaaa1024aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "1024aaaaaaaaaaaaaaaaaaaaaaaaaaaa1024aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "1024aaaaaaaaaaaaaaaaaaaaaaaaaaaa1024aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "1024aaaaaaaaaaaaaaaaaaaaaaaaaaaa1024aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "1024aaaaaaaaaaaaaaaaaaaaaaaaaaaa1024aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "1024aaaaaaaaaaaaaaaaaaaaaaaaaaaa1024aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "1024aaaaaaaaaaaaaaaaaaaaaaaaaaaa1024aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "1024aaaaaaaaaaaaaaaaaaaaaaaaaaaa1024aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "1024aaaaaaaaaaaaaaaaaaaaaaaaaaaa1024aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "1024aaaaaaaaaaaaaaaaaaaaaaaaaaaa1024aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "1024aaaaaaaaaaaaaaaaaaaaaaaaaaaa1024aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "1024aaaaaaaaaaaaaaaaaaaaaaaaaaaa1024aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "1024aaaaaaaaaaaaaaaaaaaaaaaaaaaa1024aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "1024aaaaaaaaaaaaaaaaaaaaaaaaaaaa1024aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "1024aaaaaaaaaaaaaaaaaaaaaaaaaaaa1024aaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-    "2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa2048aaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    "4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa4096aaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-    NULL,
-};
-
 static inline int TestWrapMemcmp(const uint8_t *s1, const uint8_t *s2, size_t len)
 {
     return (memcmp(s1, s2, len) == 0) ? 0 : 1;
@@ -362,7 +225,8 @@ static inline int TestWrapMemcmp(const uint8_t *s1, const uint8_t *s2, size_t le
 
 typedef int (*TestFunc)(const uint8_t *a, const uint8_t *b, size_t sz);
 
-#define TEST_RUNS 10000
+#define TEST_RUNS 1000
+
 /* patterns actually used with Tolower in our codebase */
 static int RealisticDriver(TestFunc FPtr)
 {
@@ -386,75 +250,7 @@ static int RealisticDriver(TestFunc FPtr)
     }
     return 1;
 }
-#undef TEST_RUNS
 
-#define BIGSZ 1024 * 1024
-#define DRIVER(f)                                                                                  \
-    uint8_t *big = SCCalloc(1, BIGSZ);                                                             \
-    memset(big, 'a', BIGSZ);                                                                       \
-    int res = 0;                                                                                   \
-    uint64_t ticks_start = UtilCpuGetTicks();                                                      \
-    for (int t = 0; t < TEST_RUNS; t++) {                                                          \
-        for (int i = 0; syn[i] != NULL; i++) {                                                     \
-            size_t alen = strlen(syn[i]);                                                          \
-            for (int j = 0; syn[j] != NULL; j++) {                                                 \
-                size_t blen = strlen(syn[j]);                                                      \
-                res += (f)((uint8_t *)syn[i], (uint8_t *)syn[j], (alen < blen) ? alen : blen);     \
-            }                                                                                      \
-        }                                                                                          \
-    }                                                                                              \
-    uint64_t ticks_end = UtilCpuGetTicks();                                                        \
-    printf("syn: %6" PRIu64 "k - ", ((uint64_t)(ticks_end - ticks_start)) / 1000);                 \
-    if (res != (150 * TEST_RUNS)) {                                                                \
-        SCLogNotice("%d %" PRIu64 "k\n", res, ((uint64_t)(ticks_end - ticks_start)) / 1000);       \
-        return 0;                                                                                  \
-    }                                                                                              \
-    res = 0;                                                                                       \
-    ticks_start = UtilCpuGetTicks();                                                               \
-    for (int t = 0; t < 10; t++) {                                                                 \
-        for (int i = 0; used[i] != NULL; i++) {                                                    \
-            size_t alen = strlen(used[i]);                                                         \
-            for (size_t j = 0; j < BIGSZ; j++) {                                                   \
-                if (BIGSZ - j < alen)                                                              \
-                    continue;                                                                      \
-                uint8_t *b = big + j;                                                              \
-                res += (f)((uint8_t *)used[i], b, alen);                                           \
-            }                                                                                      \
-        }                                                                                          \
-    }                                                                                              \
-    ticks_end = UtilCpuGetTicks();                                                                 \
-    printf("stream1: %6" PRIu64 "k - ", ((uint64_t)(ticks_end - ticks_start)) / 1000);             \
-    if (res != 241171100) {                                                                        \
-        SCLogNotice("%d %" PRIu64 "k\n", res, ((uint64_t)(ticks_end - ticks_start)) / 1000);       \
-        return 0;                                                                                  \
-    }                                                                                              \
-    res = 0;                                                                                       \
-    ticks_start = UtilCpuGetTicks();                                                               \
-    for (int t = 0; t < 10; t++) {                                                                 \
-        for (int i = 0; syn[i] != NULL; i++) {                                                     \
-            size_t alen = strlen(syn[i]);                                                          \
-                                                                                                   \
-            for (size_t j = 0; j < BIGSZ; j++) {                                                   \
-                if (BIGSZ - j < alen)                                                              \
-                    continue;                                                                      \
-                uint8_t *b = big + j;                                                              \
-                res += (f)((uint8_t *)syn[i], b, alen);                                            \
-            }                                                                                      \
-        }                                                                                          \
-    }                                                                                              \
-    ticks_end = UtilCpuGetTicks();                                                                 \
-    printf("stream2: %6" PRIu64 "k - ", ((uint64_t)(ticks_end - ticks_start)) / 1000);             \
-    if (res != 136233100) {                                                                        \
-        SCLogNotice("%d %" PRIu64 "k\n", res, ((uint64_t)(ticks_end - ticks_start)) / 1000);       \
-        return 0;                                                                                  \
-    }                                                                                              \
-    SCFree(big);
-#endif
-// #undef DRIVER
-// #undef BIGSZ
-
-#ifdef PROFILING
-#define TEST_RUNS 1000000
 #define PKT_SMALL 64
 #define PKT_ETH   1418
 #define PKT_JUMBO 9000
@@ -526,16 +322,11 @@ static int B16Driver(TestFunc FPtr)
 }
 #endif
 
-#undef TEST_RUNS
-
-#define TEST_RUNS 10000 // for DRIVER macro
-
 static int MemcmpTestExactLibcMemcmp(void)
 {
 #ifdef PROFILING
 #define F TestWrapMemcmp
     FAIL_IF(!B16Driver((F)));
-    DRIVER((F));
     RealisticDriver((F));
     PktDriver((F), PKT_SMALL);
     PktDriver((F), PKT_ETH);
@@ -550,7 +341,6 @@ static int MemcmpTestExactSCMemcmp(void)
 #ifdef PROFILING
 #define F SCMemcmp
     FAIL_IF(!B16Driver((F)));
-    DRIVER((F));
     RealisticDriver((F));
     PktDriver((F), PKT_SMALL);
     PktDriver((F), PKT_ETH);
@@ -566,7 +356,6 @@ static int MemcmpTestExactSCMemcmpSSE3(void)
 #ifdef PROFILING
 #define F SCMemcmpSSE3
     FAIL_IF(!B16Driver((F)));
-    DRIVER((F));
     RealisticDriver((F));
     PktDriver((F), PKT_SMALL);
     PktDriver((F), PKT_ETH);
@@ -583,7 +372,6 @@ static int MemcmpTestExactSCMemcmpSSE42(void)
 #ifdef PROFILING
 #define F SCMemcmpSSE42
     FAIL_IF(!B16Driver((F)));
-    DRIVER((F));
     RealisticDriver((F));
     PktDriver((F), PKT_SMALL);
     PktDriver((F), PKT_ETH);
@@ -600,7 +388,6 @@ static int MemcmpTestExactSCMemcmpAVX2(void)
 #ifdef __AVX2__
 #define F SCMemcmpAVX2
     FAIL_IF(!B16Driver((F)));
-    DRIVER((F));
     RealisticDriver((F));
     PktDriver((F), PKT_SMALL);
     PktDriver((F), PKT_ETH);
@@ -617,7 +404,6 @@ static int MemcmpTestExactSCMemcmpAVX2_512(void)
 #ifdef __AVX2__
 #define F SCMemcmpAVX2_512
     FAIL_IF(!B16Driver((F)));
-    DRIVER((F));
     RealisticDriver((F));
     PktDriver((F), PKT_SMALL);
     PktDriver((F), PKT_ETH);
@@ -634,7 +420,6 @@ static int MemcmpTestExactSCMemcmpAVX2_1024(void)
 #ifdef __AVX2__
 #define F SCMemcmpAVX2_1024
     FAIL_IF(!B16Driver((F)));
-    DRIVER((F));
     RealisticDriver((F));
     PktDriver((F), PKT_SMALL);
     PktDriver((F), PKT_ETH);
@@ -651,7 +436,6 @@ static int MemcmpTestExactSCMemcmpAVX512_LT16(void)
 #if defined(__AVX512VBMI2__)
 #define F SCMemcmpAVX512_LT16
     FAIL_IF(!B16Driver((F)));
-    DRIVER((F));
     RealisticDriver((F));
     PktDriver((F), PKT_SMALL);
     PktDriver((F), PKT_ETH);
@@ -667,7 +451,6 @@ static int MemcmpTestExactSCMemcmpAVX512_LT32(void)
 #if defined(__AVX512VBMI2__)
 #define F SCMemcmpAVX512_LT32
     FAIL_IF(!B16Driver((F)));
-    DRIVER((F));
     RealisticDriver((F));
     PktDriver((F), PKT_SMALL);
     PktDriver((F), PKT_ETH);
@@ -683,7 +466,6 @@ static int MemcmpTestExactSCMemcmpAVX512_LT64(void)
 #if defined(__AVX512VBMI2__)
 #define F SCMemcmpAVX512_LT64
     FAIL_IF(!B16Driver((F)));
-    DRIVER((F));
     RealisticDriver((F));
     PktDriver((F), PKT_SMALL);
     PktDriver((F), PKT_ETH);
@@ -699,7 +481,6 @@ static int MemcmpTestExactSCMemcmpAVX512_128(void)
 #if defined(__AVX512VL__) && defined(__AVX512BW__)
 #define F SCMemcmpAVX512_128
     FAIL_IF(!B16Driver((F)));
-    DRIVER((F));
     RealisticDriver((F));
     PktDriver((F), PKT_SMALL);
     PktDriver((F), PKT_ETH);
@@ -716,7 +497,6 @@ static int MemcmpTestExactSCMemcmpAVX512_256(void)
 #if defined(__AVX512VL__) && defined(__AVX512BW__)
 #define F SCMemcmpAVX512_256
     FAIL_IF(!B16Driver((F)));
-    DRIVER((F));
     RealisticDriver((F));
     PktDriver((F), PKT_SMALL);
     PktDriver((F), PKT_ETH);
@@ -733,7 +513,6 @@ static int MemcmpTestExactSCMemcmpAVX512_512(void)
 #if defined(__AVX512VL__) && defined(__AVX512BW__)
 #define F SCMemcmpAVX512_512
     FAIL_IF(!B16Driver((F)));
-    DRIVER((F));
     RealisticDriver((F));
     PktDriver((F), PKT_SMALL);
     PktDriver((F), PKT_ETH);
@@ -750,7 +529,6 @@ static int MemcmpTestExactSCMemcmpAVX512_2048(void)
 #if defined(__AVX512VL__) && defined(__AVX512BW__)
 #define F SCMemcmpAVX512_2048
     FAIL_IF(!B16Driver((F)));
-    DRIVER((F));
     RealisticDriver((F));
     PktDriver((F), PKT_SMALL);
     PktDriver((F), PKT_ETH);
@@ -767,7 +545,6 @@ static int MemcmpTestExactSCMemcmpAVX512_4096(void)
 #if defined(__AVX512VL__) && defined(__AVX512BW__)
 #define F SCMemcmpAVX512_4096
     FAIL_IF(!B16Driver((F)));
-    DRIVER((F));
     RealisticDriver((F));
     PktDriver((F), PKT_SMALL);
     PktDriver((F), PKT_ETH);
@@ -784,7 +561,6 @@ static int MemcmpTestExactSCMemcmpAVX512_6144(void)
 #if defined(__AVX512VL__) && defined(__AVX512BW__)
 #define F SCMemcmpAVX512_6144
     FAIL_IF(!B16Driver((F)));
-    DRIVER((F));
     RealisticDriver((F));
     PktDriver((F), PKT_SMALL);
     PktDriver((F), PKT_ETH);
@@ -801,7 +577,6 @@ static int MemcmpTestExactSCMemcmpNeon(void)
 #if defined(__ARM_NEON)
 #define F SCMemcmpNeon
     FAIL_IF(!B16Driver((F)));
-    DRIVER((F));
     RealisticDriver((F));
     PktDriver((F), PKT_SMALL);
     PktDriver((F), PKT_ETH);
@@ -818,7 +593,6 @@ static int MemcmpTestExactSCMemcmpSVE(void)
 #if defined(__ARM_FEATURE_SVE)
 #define F SCMemcmpSVE
     FAIL_IF(!B16Driver((F)));
-    DRIVER((F));
     RealisticDriver((F));
     PktDriver((F), PKT_SMALL);
     PktDriver((F), PKT_ETH);
@@ -832,7 +606,6 @@ static int MemcmpTestExactSCMemcmpSVE(void)
 static int MemcmpTestLowercaseDefault(void)
 {
 #ifdef PROFILING
-    DRIVER(SCMemcmpLowercase);
     RealisticDriver(SCMemcmpLowercase);
 #endif
     return 1;
@@ -841,7 +614,6 @@ static int MemcmpTestLowercaseDefault(void)
 static int MemcmpTestLowercaseNoSIMD(void)
 {
 #ifdef PROFILING
-    DRIVER(MemcmpLowercase);
     RealisticDriver(MemcmpLowercase);
 #endif
     return 1;
@@ -851,7 +623,6 @@ static int MemcmpTestLowercaseSSE3(void)
 {
 #if defined(__SSE3__)
 #ifdef PROFILING
-    DRIVER(SCMemcmpLowercaseSSE3);
     RealisticDriver(SCMemcmpLowercaseSSE3);
 #endif
 #endif
@@ -862,7 +633,6 @@ static int MemcmpTestLowercaseSSE3and(void)
 {
 #if defined(__SSE3__)
 #ifdef PROFILING
-    DRIVER(SCMemcmpLowercaseSSE3and);
     RealisticDriver(SCMemcmpLowercaseSSE3and);
 #endif
 #endif
@@ -873,7 +643,6 @@ static int MemcmpTestLowercaseSSE3andload(void)
 {
 #if defined(__SSE3__)
 #ifdef PROFILING
-    DRIVER(SCMemcmpLowercaseSSE3andload);
     RealisticDriver(SCMemcmpLowercaseSSE3andload);
 #endif
 #endif
@@ -884,7 +653,6 @@ static int MemcmpTestLowercaseSSE42(void)
 {
 #if defined(__SSE4_2__)
 #ifdef PROFILING
-    DRIVER(SCMemcmpLowercaseSSE42);
     RealisticDriver(SCMemcmpLowercaseSSE42);
 #endif
 #endif
@@ -895,7 +663,6 @@ static int MemcmpTestLowercaseAVX2(void)
 {
 #ifdef PROFILING
 #ifdef __AVX2__
-    DRIVER(SCMemcmpLowercaseAVX2);
     RealisticDriver(SCMemcmpLowercaseAVX2);
 #endif
 #endif
@@ -906,7 +673,6 @@ static int MemcmpTestLowercaseAVX512_LT16(void)
 {
 #ifdef PROFILING
 #if defined(__AVX512VBMI2__)
-    DRIVER(SCMemcmpLowercaseAVX512_LT16);
     RealisticDriver(SCMemcmpLowercaseAVX512_LT16);
 #endif
 #endif
@@ -917,7 +683,6 @@ static int MemcmpTestLowercaseAVX512_LT32(void)
 {
 #ifdef PROFILING
 #if defined(__AVX512VBMI2__)
-    DRIVER(SCMemcmpLowercaseAVX512_LT32);
     RealisticDriver(SCMemcmpLowercaseAVX512_LT32);
 #endif
 #endif
@@ -928,7 +693,6 @@ static int MemcmpTestLowercaseAVX512_LT64(void)
 {
 #ifdef PROFILING
 #if defined(__AVX512VBMI2__)
-    DRIVER(SCMemcmpLowercaseAVX512_LT64);
     RealisticDriver(SCMemcmpLowercaseAVX512_LT64);
 #endif
 #endif
@@ -939,7 +703,6 @@ static int MemcmpTestLowercaseAVX512_128(void)
 {
 #ifdef PROFILING
 #if defined(__AVX512VL__) && defined(__AVX512BW__)
-    DRIVER(SCMemcmpLowercaseAVX512_128);
     RealisticDriver(SCMemcmpLowercaseAVX512_128);
 #endif
 #endif
@@ -950,7 +713,6 @@ static int MemcmpTestLowercaseAVX512_256(void)
 {
 #ifdef PROFILING
 #if defined(__AVX512VL__) && defined(__AVX512BW__)
-    DRIVER(SCMemcmpLowercaseAVX512_256);
     RealisticDriver(SCMemcmpLowercaseAVX512_256);
 #endif
 #endif
@@ -961,7 +723,6 @@ static int MemcmpTestLowercaseAVX512_512(void)
 {
 #ifdef PROFILING
 #if defined(__AVX512VL__) && defined(__AVX512BW__)
-    DRIVER(SCMemcmpLowercaseAVX512_512);
     RealisticDriver(SCMemcmpLowercaseAVX512_512);
 #endif
 #endif
@@ -972,7 +733,6 @@ static int MemcmpTestLowercaseSVE(void)
 {
 #ifdef PROFILING
 #if defined(__ARM_FEATURE_SVE)
-    DRIVER(SCMemcmpLowercaseSVE);
     RealisticDriver(SCMemcmpLowercaseSVE);
 #endif
 #endif
@@ -983,7 +743,6 @@ static int MemcmpTestLowercaseNeon(void)
 {
 #ifdef PROFILING
 #if defined(__ARM_NEON)
-    DRIVER(SCMemcmpLowercaseNeon);
     RealisticDriver(SCMemcmpLowercaseNeon);
 #endif
 #endif
