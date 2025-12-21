@@ -835,8 +835,8 @@ static inline int SCMemcmpSSE3(const uint8_t *s1, const uint8_t *s2, size_t len)
         }
 
         /* unaligned loads */
-        b1 = _mm_loadu_si128((const __m128i *)s1);
-        b2 = _mm_loadu_si128((const __m128i *)s2);
+        b1 = _mm_lddqu_si128((const __m128i *)s1);
+        b2 = _mm_lddqu_si128((const __m128i *)s2);
         c = _mm_cmpeq_epi8(b1, b2);
 
         if (_mm_movemask_epi8(c) != 0x0000FFFF) {
