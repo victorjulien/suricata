@@ -352,6 +352,22 @@ static int MemcmpTestExactSCMemcmp(void)
     PASS;
 }
 
+static int MemcmpTestExactSCMemcmpSSE2(void)
+{
+#if defined(__SSE2__)
+#ifdef PROFILING
+#define F SCMemcmpSSE2
+    FAIL_IF(!B16Driver((F)));
+    RealisticDriver((F));
+    PktDriver((F), PKT_SMALL);
+    PktDriver((F), PKT_ETH);
+    PktDriver((F), PKT_JUMBO);
+#undef F
+#endif
+#endif
+    PASS;
+}
+
 static int MemcmpTestExactSCMemcmpSSE3(void)
 {
 #if defined(__SSE3__)
@@ -995,6 +1011,7 @@ void MemcmpRegisterTests(void)
     UtRegisterTest("MemcmpTest13", MemcmpTest13);
     UtRegisterTest("MemcmpTestExactLibcMemcmp", MemcmpTestExactLibcMemcmp);
     UtRegisterTest("MemcmpTestExactSCMemcmpDefault", MemcmpTestExactSCMemcmp);
+    UtRegisterTest("MemcmpTestExactSCMemcmpSSE2", MemcmpTestExactSCMemcmpSSE2);
     UtRegisterTest("MemcmpTestExactSCMemcmpSSE3", MemcmpTestExactSCMemcmpSSE3);
     UtRegisterTest("MemcmpTestExactSCMemcmpSSE42", MemcmpTestExactSCMemcmpSSE42);
     UtRegisterTest("MemcmpTestExactSCMemcmpAVX2", MemcmpTestExactSCMemcmpAVX2);
