@@ -694,14 +694,14 @@ static char scmemcmp_upper_hi32[32] __attribute__((aligned(32))) = {
 static inline int SCMemcmpLowercaseAVX2(const uint8_t *s1, const uint8_t *s2, size_t len)
 {
     size_t offset = 0;
-    __m256i upper1 = _mm256_load_si256((const __m256i *)scmemcmp_upper_low32);
-    __m256i upper2 = _mm256_load_si256((const __m256i *)scmemcmp_upper_hi32);
-    __m256i spaces = _mm256_load_si256((const __m256i *)scmemcmp_space32);
 
     do {
         if (likely(len - offset < SCMEMCMP_BYTES)) {
             return SCMemcmpLowercaseLT32(s1 + offset, s2 + offset, len - offset);
         }
+        __m256i upper1 = _mm256_load_si256((const __m256i *)scmemcmp_upper_low32);
+        __m256i upper2 = _mm256_load_si256((const __m256i *)scmemcmp_upper_hi32);
+        __m256i spaces = _mm256_load_si256((const __m256i *)scmemcmp_space32);
 
         /* unaligned loading of the bytes to compare */
         __m256i b1 = _mm256_lddqu_si256((const __m256i *)(s1 + offset));
