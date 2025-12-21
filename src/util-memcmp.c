@@ -499,6 +499,31 @@ static int PktDriver(TestFunc FPtr, size_t size)
     SCFree(seg_nomatch);
     return 1;
 }
+
+static int B16Driver(TestFunc FPtr)
+{
+    uint32_t bs = 1024 * 1024;
+    uint8_t *b = SCCalloc(1, bs);
+    if (b == NULL)
+        return 0;
+
+    int res = 0;
+    uint64_t ticks_start = UtilCpuGetTicks();
+    for (uint32_t x = 0; x < 32; x++) {
+        union {
+            uint32_t a32[4];
+            uint8_t a8[16];
+        } a = { .a32[0] = x, .a32[1] = x, .a32[2] = x, .a32[3] = x };
+        for (uint32_t o = 0; o < (bs - 16); o += 16) {
+            cc_barrier();
+            res += (FPtr)((uint8_t *)b + o, a.a8, 16);
+        }
+    }
+    uint64_t ticks_end = UtilCpuGetTicks();
+    printf("16b: %8" PRIu64 "k - %d ", ((uint64_t)(ticks_end - ticks_start) / (uint64_t)1000), res);
+    SCFree(b);
+    return res == 2031585;
+}
 #endif
 
 #undef TEST_RUNS
@@ -508,11 +533,14 @@ static int PktDriver(TestFunc FPtr, size_t size)
 static int MemcmpTestExactLibcMemcmp(void)
 {
 #ifdef PROFILING
-    DRIVER(TestWrapMemcmp);
-    RealisticDriver(TestWrapMemcmp);
-    PktDriver(TestWrapMemcmp, PKT_SMALL);
-    PktDriver(TestWrapMemcmp, PKT_ETH);
-    PktDriver(TestWrapMemcmp, PKT_JUMBO);
+#define F TestWrapMemcmp
+    FAIL_IF(!B16Driver((F)));
+    DRIVER((F));
+    RealisticDriver((F));
+    PktDriver((F), PKT_SMALL);
+    PktDriver((F), PKT_ETH);
+    PktDriver((F), PKT_JUMBO);
+#undef F
 #endif
     PASS;
 }
@@ -520,11 +548,14 @@ static int MemcmpTestExactLibcMemcmp(void)
 static int MemcmpTestExactSCMemcmp(void)
 {
 #ifdef PROFILING
-    DRIVER(SCMemcmp);
-    RealisticDriver(SCMemcmp);
-    PktDriver(SCMemcmp, PKT_SMALL);
-    PktDriver(SCMemcmp, PKT_ETH);
-    PktDriver(SCMemcmp, PKT_JUMBO);
+#define F SCMemcmp
+    FAIL_IF(!B16Driver((F)));
+    DRIVER((F));
+    RealisticDriver((F));
+    PktDriver((F), PKT_SMALL);
+    PktDriver((F), PKT_ETH);
+    PktDriver((F), PKT_JUMBO);
+#undef F
 #endif
     PASS;
 }
@@ -533,11 +564,14 @@ static int MemcmpTestExactSCMemcmpSSE3(void)
 {
 #if defined(__SSE3__)
 #ifdef PROFILING
-    DRIVER(SCMemcmpSSE3);
-    RealisticDriver(SCMemcmpSSE3);
-    PktDriver(SCMemcmpSSE3, PKT_SMALL);
-    PktDriver(SCMemcmpSSE3, PKT_ETH);
-    PktDriver(SCMemcmpSSE3, PKT_JUMBO);
+#define F SCMemcmpSSE3
+    FAIL_IF(!B16Driver((F)));
+    DRIVER((F));
+    RealisticDriver((F));
+    PktDriver((F), PKT_SMALL);
+    PktDriver((F), PKT_ETH);
+    PktDriver((F), PKT_JUMBO);
+#undef F
 #endif
 #endif
     PASS;
@@ -547,11 +581,14 @@ static int MemcmpTestExactSCMemcmpSSE42(void)
 {
 #if defined(__SSE4_2__)
 #ifdef PROFILING
-    DRIVER(SCMemcmpSSE42);
-    RealisticDriver(SCMemcmpSSE42);
-    PktDriver(SCMemcmpSSE42, PKT_SMALL);
-    PktDriver(SCMemcmpSSE42, PKT_ETH);
-    PktDriver(SCMemcmpSSE42, PKT_JUMBO);
+#define F SCMemcmpSSE42
+    FAIL_IF(!B16Driver((F)));
+    DRIVER((F));
+    RealisticDriver((F));
+    PktDriver((F), PKT_SMALL);
+    PktDriver((F), PKT_ETH);
+    PktDriver((F), PKT_JUMBO);
+#undef F
 #endif
 #endif
     return 1;
@@ -561,11 +598,14 @@ static int MemcmpTestExactSCMemcmpAVX2(void)
 {
 #ifdef PROFILING
 #ifdef __AVX2__
-    DRIVER(SCMemcmpAVX2);
-    RealisticDriver(SCMemcmpAVX2);
-    PktDriver(SCMemcmpAVX2, PKT_SMALL);
-    PktDriver(SCMemcmpAVX2, PKT_ETH);
-    PktDriver(SCMemcmpAVX2, PKT_JUMBO);
+#define F SCMemcmpAVX2
+    FAIL_IF(!B16Driver((F)));
+    DRIVER((F));
+    RealisticDriver((F));
+    PktDriver((F), PKT_SMALL);
+    PktDriver((F), PKT_ETH);
+    PktDriver((F), PKT_JUMBO);
+#undef F
 #endif
 #endif
     return 1;
@@ -575,11 +615,14 @@ static int MemcmpTestExactSCMemcmpAVX2_512(void)
 {
 #ifdef PROFILING
 #ifdef __AVX2__
-    DRIVER(SCMemcmpAVX2_512);
-    RealisticDriver(SCMemcmpAVX2_512);
-    PktDriver(SCMemcmpAVX2_512, PKT_SMALL);
-    PktDriver(SCMemcmpAVX2_512, PKT_ETH);
-    PktDriver(SCMemcmpAVX2_512, PKT_JUMBO);
+#define F SCMemcmpAVX2_512
+    FAIL_IF(!B16Driver((F)));
+    DRIVER((F));
+    RealisticDriver((F));
+    PktDriver((F), PKT_SMALL);
+    PktDriver((F), PKT_ETH);
+    PktDriver((F), PKT_JUMBO);
+#undef F
 #endif
 #endif
     return 1;
@@ -589,11 +632,14 @@ static int MemcmpTestExactSCMemcmpAVX2_1024(void)
 {
 #ifdef PROFILING
 #ifdef __AVX2__
-    DRIVER(SCMemcmpAVX2_1024);
-    RealisticDriver(SCMemcmpAVX2_1024);
-    PktDriver(SCMemcmpAVX2_1024, PKT_SMALL);
-    PktDriver(SCMemcmpAVX2_1024, PKT_ETH);
-    PktDriver(SCMemcmpAVX2_1024, PKT_JUMBO);
+#define F SCMemcmpAVX2_1024
+    FAIL_IF(!B16Driver((F)));
+    DRIVER((F));
+    RealisticDriver((F));
+    PktDriver((F), PKT_SMALL);
+    PktDriver((F), PKT_ETH);
+    PktDriver((F), PKT_JUMBO);
+#undef F
 #endif
 #endif
     return 1;
@@ -603,11 +649,14 @@ static int MemcmpTestExactSCMemcmpAVX512_LT16(void)
 {
 #ifdef PROFILING
 #if defined(__AVX512VBMI2__)
-    DRIVER(SCMemcmpAVX512_LT16);
-    RealisticDriver(SCMemcmpAVX512_LT16);
-    PktDriver(SCMemcmpAVX512_LT16, PKT_SMALL);
-    PktDriver(SCMemcmpAVX512_LT16, PKT_ETH);
-    PktDriver(SCMemcmpAVX512_LT16, PKT_JUMBO);
+#define F SCMemcmpAVX512_LT16
+    FAIL_IF(!B16Driver((F)));
+    DRIVER((F));
+    RealisticDriver((F));
+    PktDriver((F), PKT_SMALL);
+    PktDriver((F), PKT_ETH);
+    PktDriver((F), PKT_JUMBO);
+#undef F
 #endif
 #endif
     return 1;
@@ -616,11 +665,14 @@ static int MemcmpTestExactSCMemcmpAVX512_LT32(void)
 {
 #ifdef PROFILING
 #if defined(__AVX512VBMI2__)
-    DRIVER(SCMemcmpAVX512_LT32);
-    RealisticDriver(SCMemcmpAVX512_LT32);
-    PktDriver(SCMemcmpAVX512_LT32, PKT_SMALL);
-    PktDriver(SCMemcmpAVX512_LT32, PKT_ETH);
-    PktDriver(SCMemcmpAVX512_LT32, PKT_JUMBO);
+#define F SCMemcmpAVX512_LT32
+    FAIL_IF(!B16Driver((F)));
+    DRIVER((F));
+    RealisticDriver((F));
+    PktDriver((F), PKT_SMALL);
+    PktDriver((F), PKT_ETH);
+    PktDriver((F), PKT_JUMBO);
+#undef F
 #endif
 #endif
     return 1;
@@ -629,11 +681,14 @@ static int MemcmpTestExactSCMemcmpAVX512_LT64(void)
 {
 #ifdef PROFILING
 #if defined(__AVX512VBMI2__)
-    DRIVER(SCMemcmpAVX512_LT64);
-    RealisticDriver(SCMemcmpAVX512_LT64);
-    PktDriver(SCMemcmpAVX512_LT64, PKT_SMALL);
-    PktDriver(SCMemcmpAVX512_LT64, PKT_ETH);
-    PktDriver(SCMemcmpAVX512_LT64, PKT_JUMBO);
+#define F SCMemcmpAVX512_LT64
+    FAIL_IF(!B16Driver((F)));
+    DRIVER((F));
+    RealisticDriver((F));
+    PktDriver((F), PKT_SMALL);
+    PktDriver((F), PKT_ETH);
+    PktDriver((F), PKT_JUMBO);
+#undef F
 #endif
 #endif
     return 1;
@@ -642,11 +697,14 @@ static int MemcmpTestExactSCMemcmpAVX512_128(void)
 {
 #ifdef PROFILING
 #if defined(__AVX512VL__) && defined(__AVX512BW__)
-    DRIVER(SCMemcmpAVX512_128);
-    RealisticDriver(SCMemcmpAVX512_128);
-    PktDriver(SCMemcmpAVX512_128, PKT_SMALL);
-    PktDriver(SCMemcmpAVX512_128, PKT_ETH);
-    PktDriver(SCMemcmpAVX512_128, PKT_JUMBO);
+#define F SCMemcmpAVX512_128
+    FAIL_IF(!B16Driver((F)));
+    DRIVER((F));
+    RealisticDriver((F));
+    PktDriver((F), PKT_SMALL);
+    PktDriver((F), PKT_ETH);
+    PktDriver((F), PKT_JUMBO);
+#undef F
 #endif
 #endif
     return 1;
@@ -656,11 +714,14 @@ static int MemcmpTestExactSCMemcmpAVX512_256(void)
 {
 #ifdef PROFILING
 #if defined(__AVX512VL__) && defined(__AVX512BW__)
-    DRIVER(SCMemcmpAVX512_256);
-    RealisticDriver(SCMemcmpAVX512_256);
-    PktDriver(SCMemcmpAVX512_256, PKT_SMALL);
-    PktDriver(SCMemcmpAVX512_256, PKT_ETH);
-    PktDriver(SCMemcmpAVX512_256, PKT_JUMBO);
+#define F SCMemcmpAVX512_256
+    FAIL_IF(!B16Driver((F)));
+    DRIVER((F));
+    RealisticDriver((F));
+    PktDriver((F), PKT_SMALL);
+    PktDriver((F), PKT_ETH);
+    PktDriver((F), PKT_JUMBO);
+#undef F
 #endif
 #endif
     return 1;
@@ -670,11 +731,14 @@ static int MemcmpTestExactSCMemcmpAVX512_512(void)
 {
 #ifdef PROFILING
 #if defined(__AVX512VL__) && defined(__AVX512BW__)
-    DRIVER(SCMemcmpAVX512_512);
-    RealisticDriver(SCMemcmpAVX512_512);
-    PktDriver(SCMemcmpAVX512_512, PKT_SMALL);
-    PktDriver(SCMemcmpAVX512_512, PKT_ETH);
-    PktDriver(SCMemcmpAVX512_512, PKT_JUMBO);
+#define F SCMemcmpAVX512_512
+    FAIL_IF(!B16Driver((F)));
+    DRIVER((F));
+    RealisticDriver((F));
+    PktDriver((F), PKT_SMALL);
+    PktDriver((F), PKT_ETH);
+    PktDriver((F), PKT_JUMBO);
+#undef F
 #endif
 #endif
     return 1;
@@ -684,11 +748,14 @@ static int MemcmpTestExactSCMemcmpAVX512_2048(void)
 {
 #ifdef PROFILING
 #if defined(__AVX512VL__) && defined(__AVX512BW__)
-    DRIVER(SCMemcmpAVX512_2048);
-    RealisticDriver(SCMemcmpAVX512_2048);
-    PktDriver(SCMemcmpAVX512_2048, PKT_SMALL);
-    PktDriver(SCMemcmpAVX512_2048, PKT_ETH);
-    PktDriver(SCMemcmpAVX512_2048, PKT_JUMBO);
+#define F SCMemcmpAVX512_2048
+    FAIL_IF(!B16Driver((F)));
+    DRIVER((F));
+    RealisticDriver((F));
+    PktDriver((F), PKT_SMALL);
+    PktDriver((F), PKT_ETH);
+    PktDriver((F), PKT_JUMBO);
+#undef F
 #endif
 #endif
     return 1;
@@ -698,11 +765,14 @@ static int MemcmpTestExactSCMemcmpAVX512_4096(void)
 {
 #ifdef PROFILING
 #if defined(__AVX512VL__) && defined(__AVX512BW__)
-    DRIVER(SCMemcmpAVX512_4096);
-    RealisticDriver(SCMemcmpAVX512_4096);
-    PktDriver(SCMemcmpAVX512_4096, PKT_SMALL);
-    PktDriver(SCMemcmpAVX512_4096, PKT_ETH);
-    PktDriver(SCMemcmpAVX512_4096, PKT_JUMBO);
+#define F SCMemcmpAVX512_4096
+    FAIL_IF(!B16Driver((F)));
+    DRIVER((F));
+    RealisticDriver((F));
+    PktDriver((F), PKT_SMALL);
+    PktDriver((F), PKT_ETH);
+    PktDriver((F), PKT_JUMBO);
+#undef F
 #endif
 #endif
     return 1;
@@ -712,11 +782,14 @@ static int MemcmpTestExactSCMemcmpAVX512_6144(void)
 {
 #ifdef PROFILING
 #if defined(__AVX512VL__) && defined(__AVX512BW__)
-    DRIVER(SCMemcmpAVX512_6144);
-    RealisticDriver(SCMemcmpAVX512_6144);
-    PktDriver(SCMemcmpAVX512_6144, PKT_SMALL);
-    PktDriver(SCMemcmpAVX512_6144, PKT_ETH);
-    PktDriver(SCMemcmpAVX512_6144, PKT_JUMBO);
+#define F SCMemcmpAVX512_6144
+    FAIL_IF(!B16Driver((F)));
+    DRIVER((F));
+    RealisticDriver((F));
+    PktDriver((F), PKT_SMALL);
+    PktDriver((F), PKT_ETH);
+    PktDriver((F), PKT_JUMBO);
+#undef F
 #endif
 #endif
     return 1;
@@ -726,11 +799,14 @@ static int MemcmpTestExactSCMemcmpNeon(void)
 {
 #ifdef PROFILING
 #if defined(__ARM_NEON)
-    DRIVER(SCMemcmpNeon);
-    RealisticDriver(SCMemcmpNeon);
-    PktDriver(SCMemcmpNeon, PKT_SMALL);
-    PktDriver(SCMemcmpNeon, PKT_ETH);
-    PktDriver(SCMemcmpNeon, PKT_JUMBO);
+#define F SCMemcmpNeon
+    FAIL_IF(!B16Driver((F)));
+    DRIVER((F));
+    RealisticDriver((F));
+    PktDriver((F), PKT_SMALL);
+    PktDriver((F), PKT_ETH);
+    PktDriver((F), PKT_JUMBO);
+#undef F
 #endif
 #endif
     return 1;
@@ -740,11 +816,14 @@ static int MemcmpTestExactSCMemcmpSVE(void)
 {
 #ifdef PROFILING
 #if defined(__ARM_FEATURE_SVE)
-    DRIVER(SCMemcmpSVE);
-    RealisticDriver(SCMemcmpSVE);
-    PktDriver(SCMemcmpSVE, PKT_SMALL);
-    PktDriver(SCMemcmpSVE, PKT_ETH);
-    PktDriver(SCMemcmpSVE, PKT_JUMBO);
+#define F SCMemcmpSVE
+    FAIL_IF(!B16Driver((F)));
+    DRIVER((F));
+    RealisticDriver((F));
+    PktDriver((F), PKT_SMALL);
+    PktDriver((F), PKT_ETH);
+    PktDriver((F), PKT_JUMBO);
+#undef F
 #endif
 #endif
     return 1;
