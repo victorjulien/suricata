@@ -60,19 +60,17 @@ static inline int SCMemcmpAVX512_128(const uint8_t *s1, const uint8_t *s2, size_
     size_t offset = 0;
     do {
         if (likely(len - offset < SCMEMCMP_BYTES)) {
-            return memcmp(s1, s2, len - offset) ? 1 : 0;
+            return memcmp(s1 + offset, s2 + offset, len - offset) ? 1 : 0;
         }
 
         /* unaligned loads */
-        __m128i b1 = _mm_lddqu_si128((const __m128i *)s1);
-        __m128i b2 = _mm_lddqu_si128((const __m128i *)s2);
+        __m128i b1 = _mm_lddqu_si128((const __m128i *)(s1 + offset));
+        __m128i b2 = _mm_lddqu_si128((const __m128i *)(s2 + offset));
         if (_mm_cmpeq_epi8_mask(b1, b2) != 0x0000FFFF) {
             return 1;
         }
 
         offset += SCMEMCMP_BYTES;
-        s1 += SCMEMCMP_BYTES;
-        s2 += SCMEMCMP_BYTES;
     } while (len > offset);
 
     return 0;
@@ -84,19 +82,17 @@ static inline int SCMemcmpAVX512_256(const uint8_t *s1, const uint8_t *s2, size_
     size_t offset = 0;
     do {
         if (likely(len - offset < SCMEMCMP_BYTES)) {
-            return SCMemcmpAVX512_128(s1, s2, len - offset);
+            return SCMemcmpAVX512_128(s1 + offset, s2 + offset, len - offset);
         }
 
         /* unaligned loads */
-        __m256i b1 = _mm256_lddqu_si256((const __m256i *)s1);
-        __m256i b2 = _mm256_lddqu_si256((const __m256i *)s2);
+        __m256i b1 = _mm256_lddqu_si256((const __m256i *)(s1 + offset));
+        __m256i b2 = _mm256_lddqu_si256((const __m256i *)(s2 + offset));
         if (_mm256_cmpeq_epi8_mask(b1, b2) != UINT32_MAX) {
             return 1;
         }
 
         offset += SCMEMCMP_BYTES;
-        s1 += SCMEMCMP_BYTES;
-        s2 += SCMEMCMP_BYTES;
     } while (len > offset);
 
     return 0;
