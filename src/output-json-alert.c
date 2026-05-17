@@ -647,6 +647,24 @@ static bool AlertJsonStreamData(const AlertJsonOutputCtx *json_output_ctx, JsonA
     return false;
 }
 
+static void AlertJsonAddFirewall(SCJsonBuilder *jb, const Signature *s)
+{
+    SCJbOpenObject(jb, "firewall");
+    const char *hook;
+    if (s->flags & SIG_FLAG_TOSERVER) {
+        hook = AppLayerParserGetStateNameById(
+                IPPROTO_TCP, s->alproto, s->app_progress_hook, STREAM_TOSERVER);
+    } else {
+
+        hook = AppLayerParserGetStateNameById(
+                IPPROTO_TCP, s->alproto, s->app_progress_hook, STREAM_TOCLIENT);
+    }
+    if (hook) {
+        SCJbSetString(jb, "hook", hook);
+    }
+    SCJbClose(jb);
+}
+
 static int AlertJson(ThreadVars *tv, JsonAlertLogThread *aft, const Packet *p)
 {
     AlertJsonOutputCtx *json_output_ctx = aft->json_output_ctx;
@@ -709,6 +727,10 @@ static int AlertJson(ThreadVars *tv, JsonAlertLogThread *aft, const Packet *p)
 
         if (PacketIsTunnel(p)) {
             AlertJsonTunnel(p, jb, &json_output_ctx->eve_ctx->cfg);
+        }
+
+        if (pa->s->flags & SIG_FLAG_FIREWALL) {
+            AlertJsonAddFirewall(jb, pa->s);
         }
 
         if (p->flow != NULL) {
