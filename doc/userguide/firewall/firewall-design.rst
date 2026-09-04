@@ -138,7 +138,7 @@ by one or more secondary actions.
 
 Example::
 
-    accept:flow,pass:flow,alert tls:client_hello_done ... tls.sni; ...
+    accept:flow,pass:flow,alert tls:client_hello ... tls.sni; ...
 
 In this example the first action ``accept:flow`` is the primary firewall action. When the
 rule matches, the flow will be accepted. The secondary actions ``pass:flow`` and ``alert`` are
@@ -232,11 +232,16 @@ Available states:
 
 Request (``to_server``) side:
 
-* ``client_in_progress``
-* ``client_hello_done``
-* ``client_cert_done``
-* ``client_handshake_done``
+* ``client_started``
+* ``client_hello``
+* ``client_cert``
+* ``client_data``
 * ``client_finished``
+
+The ``client_hello`` state covers the client hello while it is being
+parsed: the state starts at the first hello byte, and the hello data
+(SNI, version, ...) is available as soon as the corresponding extension
+has been parsed.
 
 Response (``to_client``) side:
 
@@ -260,13 +265,13 @@ a rule accept not just the hook it matches in, but also the hooks before it.
 
 Example::
 
-    accept:flow tls:<client_hello_done ... tls.sni; content:"suricata.io"; ...
+    accept:flow tls:<client_hello ... tls.sni; content:"suricata.io"; ...
 
-The main matching logic here is in the ``tls:client_hello_done`` hook. The state before it,
-``tls:client_in_progress`` is also accepted, as if the ruleset was actually::
+The main matching logic here is in the ``tls:client_hello`` hook. The state before it,
+``tls:client_started`` is also accepted, as if the ruleset was actually::
 
-    accept:hook tls:client_in_progress ...
-    accept:flow tls:client_hello_done ... tls.sni; content:"suricata.io"; ...
+    accept:hook tls:client_started ...
+    accept:flow tls:client_hello ... tls.sni; content:"suricata.io"; ...
 
 This logic only applies to the ``app:filter`` table.
 
