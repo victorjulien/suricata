@@ -133,6 +133,8 @@ In this example the ``packet:filter`` rules will be more opinionated about the t
     accept:hook tcp:all $HOME_NET any <> $EXTERNAL_NET 443 (flow:established; sid:4;)
 
 Then on the TLS level this will be a TLS SNI firewall.
+:doc:`tls-state-migration` covers migrating rules and config
+keys from the pre-phase state names.
 
 Again all the states need to be accepted. Only in the ``client_hello`` state will
 there be additional constraints::
