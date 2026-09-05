@@ -245,11 +245,10 @@ has been parsed.
 
 Response (``to_client``) side:
 
-* ``server_in_progress``
+* ``server_started``
 * ``server_hello``
-* ``server_cert_done``
-* ``server_hello_done``
-* ``server_handshake_done``
+* ``server_cert``
+* ``server_data``
 * ``server_finished``
 
 ssh

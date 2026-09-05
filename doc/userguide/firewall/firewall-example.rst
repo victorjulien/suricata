@@ -145,11 +145,10 @@ there be additional constraints::
     accept:hook tls:client_data $HOME_NET any -> $EXTERNAL_NET any (sid:103;)
     accept:hook tls:client_finished $HOME_NET any -> $EXTERNAL_NET any (sid:104;)
 
-    accept:hook tls:server_in_progress $EXTERNAL_NET any -> $HOME_NET any (sid:200;)
+    accept:hook tls:server_started $EXTERNAL_NET any -> $HOME_NET any (sid:200;)
     accept:hook tls:server_hello $EXTERNAL_NET any -> $HOME_NET any (sid:201;)
-    accept:hook tls:server_cert_done $EXTERNAL_NET any -> $HOME_NET any (sid:202;)
-    accept:hook tls:server_hello_done $EXTERNAL_NET any -> $HOME_NET any (sid:203;)
-    accept:hook tls:server_handshake_done $EXTERNAL_NET any -> $HOME_NET any (sid:204;)
+    accept:hook tls:server_cert $EXTERNAL_NET any -> $HOME_NET any (sid:202;)
+    accept:hook tls:server_data $EXTERNAL_NET any -> $HOME_NET any (sid:204;)
     accept:hook tls:server_finished $EXTERNAL_NET any -> $HOME_NET any (sid:205;)
 
 The ``client_hello`` state spans the in-progress hello: rules in this

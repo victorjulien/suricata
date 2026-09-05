@@ -70,24 +70,20 @@ static SCEnumCharMap tls_state_client_table[] = {
 
 static SCEnumCharMap tls_state_server_table[] = {
     {
-            "server_in_progress",
-            TLS_STATE_SERVER_IN_PROGRESS,
+            "server_started",
+            TLS_STATE_SERVER_STARTED,
     },
     {
             "server_hello",
             TLS_STATE_SERVER_HELLO,
     },
     {
-            "server_cert_done",
-            TLS_STATE_SERVER_CERT_DONE,
+            "server_cert",
+            TLS_STATE_SERVER_CERT,
     },
     {
-            "server_hello_done",
-            TLS_STATE_SERVER_HELLO_DONE,
-    },
-    {
-            "server_handshake_done",
-            TLS_STATE_SERVER_HANDSHAKE_DONE,
+            "server_data",
+            TLS_STATE_SERVER_DATA,
     },
     {
             "server_finished",
@@ -1543,10 +1539,6 @@ static int TLSDecodeHandshakeHello(SSLState *ssl_state,
     if (SC_ATOMIC_GET(ssl_config.enable_ja3) && ssl_state->curr_connp->ja3_hash == NULL) {
         ssl_state->curr_connp->ja3_hash = Ja3GenerateHash(ssl_state->curr_connp->ja3_str);
     }
-
-    if (ssl_state->curr_connp != &ssl_state->client_connp) {
-        UpdateServerState(ssl_state, TLS_STATE_SERVER_HELLO);
-    }
 end:
     return 0;
 }
@@ -1572,9 +1564,6 @@ static inline int SSLv3ParseHandshakeTypeCertificate(SSLState *ssl_state, SSLSta
         SCLogDebug("error parsing cert, reset state");
         SSLParserHSReset(connp);
         /* fall through to still consume the cert bytes */
-    }
-    if (connp != &ssl_state->client_connp) {
-        UpdateServerState(ssl_state, TLS_STATE_SERVER_CERT_DONE);
     }
     return input_len;
 }
@@ -1668,14 +1657,10 @@ static int SSLv3ParseHandshakeType(SSLState *ssl_state, const uint8_t *input,
         case SSLV3_HS_FINISHED:
         case SSLV3_HS_CERTIFICATE_URL:
         case SSLV3_HS_CERTIFICATE_STATUS:
+        case SSLV3_HS_SERVER_HELLO_DONE:
             break;
         case SSLV3_HS_NEW_SESSION_TICKET:
             SCLogDebug("new session ticket");
-            break;
-        case SSLV3_HS_SERVER_HELLO_DONE:
-            if (direction) {
-                UpdateServerState(ssl_state, TLS_STATE_SERVER_HELLO_DONE);
-            }
             break;
         default:
             SSLSetEvent(ssl_state, TLS_DECODER_EVENT_INVALID_SSL_RECORD);
@@ -1819,6 +1804,12 @@ static int SSLv3ParseHandshakeProtocol(SSLState *ssl_state, const uint8_t *input
                 UpdateClientState(ssl_state, TLS_STATE_CLIENT_HELLO);
             } else if (ssl_state->curr_connp->handshake_type == SSLV3_HS_CERTIFICATE) {
                 UpdateClientState(ssl_state, TLS_STATE_CLIENT_CERT);
+            }
+        } else {
+            if (ssl_state->curr_connp->handshake_type == SSLV3_HS_SERVER_HELLO) {
+                UpdateServerState(ssl_state, TLS_STATE_SERVER_HELLO);
+            } else if (ssl_state->curr_connp->handshake_type == SSLV3_HS_CERTIFICATE) {
+                UpdateServerState(ssl_state, TLS_STATE_SERVER_CERT);
             }
         }
 
@@ -2316,7 +2307,6 @@ static struct SSLDecoderResult SSLv2Decode(uint8_t direction, SSLState *ssl_stat
             } else {
                 ssl_state->current_flags = SSL_AL_FLAG_STATE_CLIENT_KEYX;
             }
-            UpdateServerState(ssl_state, TLS_STATE_SERVER_CERT_DONE);
 
             /* fall through */
         case SSLV2_MT_SERVER_VERIFY:
@@ -2576,7 +2566,7 @@ static struct SSLDecoderResult SSLv3Decode(uint8_t direction, SSLState *ssl_stat
             if (ssl_state->curr_connp == &ssl_state->client_connp) {
                 UpdateClientState(ssl_state, TLS_STATE_CLIENT_DATA);
             } else {
-                UpdateServerState(ssl_state, TLS_STATE_SERVER_HANDSHAKE_DONE);
+                UpdateServerState(ssl_state, TLS_STATE_SERVER_DATA);
             }
 
             if (ssl_config.encrypt_mode != SSL_CNF_ENC_HANDLE_FULL) {
@@ -2814,12 +2804,12 @@ static AppLayerResult SSLDecode(Flow *f, uint8_t direction, void *alstate,
             ssl_state->client_connp.cert0_subject && ssl_state->client_connp.cert0_issuerdn) {
         /* update both sides to keep existing behavior */
         UpdateClientState(ssl_state, TLS_STATE_CLIENT_DATA);
-        UpdateServerState(ssl_state, TLS_STATE_SERVER_HANDSHAKE_DONE);
+        UpdateServerState(ssl_state, TLS_STATE_SERVER_DATA);
     } else if ((ssl_state->flags & SSL_AL_FLAG_NEED_CLIENT_CERT) == 0 &&
                ssl_state->server_connp.cert0_subject && ssl_state->server_connp.cert0_issuerdn) {
         /* update both sides to keep existing behavior */
         UpdateClientState(ssl_state, TLS_STATE_CLIENT_DATA);
-        UpdateServerState(ssl_state, TLS_STATE_SERVER_HANDSHAKE_DONE);
+        UpdateServerState(ssl_state, TLS_STATE_SERVER_DATA);
     }
 
     /* flag session as finished if APP_LAYER_PARSER_EOF is set */
