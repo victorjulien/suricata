@@ -3203,6 +3203,10 @@ static void CheckJA4Enabled(void)
 /**
  * \brief Function to register the SSL protocol parser and other functions
  */
+#ifdef UNITTESTS
+void SSLStateParserRegisterTests(void);
+#endif /* UNITTESTS */
+
 void RegisterSSLParsers(void)
 {
     const char *proto_name = "tls";
@@ -3264,6 +3268,11 @@ void RegisterSSLParsers(void)
 
         AppLayerParserRegisterStateProgressCompletionStatus(
                 ALPROTO_TLS, TLS_STATE_CLIENT_FINISHED, TLS_STATE_SERVER_FINISHED);
+
+#ifdef UNITTESTS
+        AppLayerParserRegisterProtocolUnittests(
+                IPPROTO_TCP, ALPROTO_TLS, SSLStateParserRegisterTests);
+#endif /* UNITTESTS */
 
         SCConfNode *enc_handle = SCConfGetNode("app-layer.protocols.tls.encryption-handling");
         if (enc_handle != NULL && enc_handle->val != NULL) {
@@ -3388,3 +3397,63 @@ bool SSLJA4IsEnabled(void)
 {
     return SC_ATOMIC_GET(ssl_config.enable_ja4);
 }
+
+/***** Unittests *****/
+
+#ifdef UNITTESTS
+static int TLSPhaseStateTestClient(void)
+{
+    const char *names[] = { "client_started", "client_hello", "client_cert", "client_data",
+        "client_finished" };
+    for (int i = 0; i < 5; i++) {
+        FAIL_IF(AppLayerParserGetStateIdByName(
+                        IPPROTO_TCP, ALPROTO_TLS, names[i], STREAM_TOSERVER) != i);
+        FAIL_IF(strcmp(AppLayerParserGetStateNameById(IPPROTO_TCP, ALPROTO_TLS, i, STREAM_TOSERVER),
+                        names[i]) != 0);
+    }
+    PASS;
+}
+
+static int TLSPhaseStateTestServer(void)
+{
+    const char *names[] = { "server_started", "server_hello", "server_cert", "server_data",
+        "server_finished" };
+    for (int i = 0; i < 5; i++) {
+        FAIL_IF(AppLayerParserGetStateIdByName(
+                        IPPROTO_TCP, ALPROTO_TLS, names[i], STREAM_TOCLIENT) != i);
+        FAIL_IF(strcmp(AppLayerParserGetStateNameById(IPPROTO_TCP, ALPROTO_TLS, i, STREAM_TOCLIENT),
+                        names[i]) != 0);
+    }
+    PASS;
+}
+
+static int TLSPhaseStateTestOldNamesGone(void)
+{
+    const char *old_client[] = { "client_in_progress", "client_hello_done", "client_cert_done",
+        "client_handshake_done" };
+    const char *old_server[] = { "server_in_progress", "server_hello_done", "server_cert_done",
+        "server_handshake_done" };
+    for (int i = 0; i < 4; i++) {
+        FAIL_IF(AppLayerParserGetStateIdByName(
+                        IPPROTO_TCP, ALPROTO_TLS, old_client[i], STREAM_TOSERVER) >= 0);
+        FAIL_IF(AppLayerParserGetStateIdByName(
+                        IPPROTO_TCP, ALPROTO_TLS, old_server[i], STREAM_TOCLIENT) >= 0);
+    }
+    PASS;
+}
+
+static int TLSPhaseStateTestCompletion(void)
+{
+    FAIL_IF(AppLayerParserGetStateProgressCompletionStatus(ALPROTO_TLS, STREAM_TOSERVER) != 4);
+    FAIL_IF(AppLayerParserGetStateProgressCompletionStatus(ALPROTO_TLS, STREAM_TOCLIENT) != 4);
+    PASS;
+}
+
+void SSLStateParserRegisterTests(void)
+{
+    UtRegisterTest("TLSPhaseStateTestClient", TLSPhaseStateTestClient);
+    UtRegisterTest("TLSPhaseStateTestServer", TLSPhaseStateTestServer);
+    UtRegisterTest("TLSPhaseStateTestOldNamesGone", TLSPhaseStateTestOldNamesGone);
+    UtRegisterTest("TLSPhaseStateTestCompletion", TLSPhaseStateTestCompletion);
+}
+#endif /* UNITTESTS */
